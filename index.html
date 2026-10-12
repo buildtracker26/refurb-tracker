@@ -199,6 +199,7 @@
     </div>
 </div>
 <!-- END OF CHUNK 3 OF 6 -->
+
 <!-- START OF REFACTORED CHUNK 4 OF 6 -->
 <script>
     // Tab switching event rules
@@ -216,10 +217,10 @@
         "pm@refurb.com": { password: "pm123", role: "Project Manager" }
     };
 
-    // Client-Side Sandbox Data Repositories initialized completely empty
-    let mockConfigAllocation = 0.00;
-    let mockExpensesDb = [];
-    let invoiceRegistry = [];
+    // Pull directly from persistent browser disk, or default to zero/empty
+    let mockConfigAllocation = parseFloat(localStorage.getItem('refurb_global_allocation') || 0.00);
+    let mockExpensesDb = JSON.parse(localStorage.getItem('refurb_expenses_data') || '[]');
+    let invoiceRegistry = JSON.parse(localStorage.getItem('refurb_invoices_data') || '[]');
     let activeUserRole = null;
 
     document.getElementById('loginSubmitBtn').addEventListener('click', function() {
@@ -251,6 +252,10 @@
         recalculateGlobalSpend();
     }
 <!-- END OF REFACTORED CHUNK 4 OF 6 -->
+
+
+
+
 // START OF REFACTORED CHUNK 5 OF 6
     function renderExpenseToDOM(item) {
         const groupName = (item.development_works || 'General').trim();
@@ -338,6 +343,7 @@
         recalculateGlobalSpend();
     };
 // END OF CHUNK 5 OF 6
+
 // START OF REFACTORED CHUNK 6 OF 6
     function refreshSupplierTableViews() {
         const pBody = document.getElementById('pendingSupplierTableBody'); const pPaid = document.getElementById('paidSupplierTableBody');
@@ -357,25 +363,18 @@
         
         if (btn.textContent === 'Amend') {
             btn.textContent = 'Save';
-            
-            // Convert table row columns into interactive inputs instantly
             cells[0].innerHTML = `<input type="date" class="inline-edit-input" value="${rec.date}">`;
             cells[1].innerHTML = `<input type="text" class="inline-edit-input" value="${rec.name}">`;
             cells[2].innerHTML = `<input type="text" class="inline-edit-input" value="${rec.invoiceNo}">`;
             cells[3].innerHTML = `<input type="number" step="0.01" class="inline-edit-input" value="${parseFloat(rec.amountPaid || 0)}">`;
             cells[4].innerHTML = `<input type="text" class="inline-edit-input" value="${rec.paymentMethod}">`;
-            
-            // Render a state toggle dropdown
             const paidSel = rec.status === 'Paid' ? 'selected' : '';
             const pendSel = rec.status === 'Pending' ? 'selected' : '';
             cells[5].innerHTML = `<select class="inline-edit-input" style="height:32px;"><option value="Paid" ${paidSel}>Paid</option><option value="Pending" ${pendSel}>Pending</option></select>`;
-            
             cells[6].innerHTML = `<input type="text" class="inline-edit-input" value="${rec.invoiceUrl}" placeholder="Paste URL">`;
         } else {
             btn.textContent = 'Amend';
             const inputs = row.querySelectorAll('input, select');
-            
-            // Extract modified variables and sync back into internal memory object
             rec.date = inputs[0].value;
             rec.name = inputs[1].value.trim();
             rec.invoiceNo = inputs[2].value.trim();
@@ -384,14 +383,17 @@
             rec.status = inputs[5].value;
             rec.invoiceUrl = inputs[6].value.trim();
             
-            // Re-render matching sheets (if status flipped, row hops automatically to the right ledger)
+            // Auto-save edited invoice state array to browser storage
+            localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry));
             refreshSupplierTableViews();
         }
     };
 
     window.deleteInvoiceRecord = function(i) {
         if (!confirm("Remove invoice record?")) return;
-        invoiceRegistry.splice(i, 1); refreshSupplierTableViews();
+        invoiceRegistry.splice(i, 1);
+        localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry));
+        refreshSupplierTableViews();
     };
 
     function recalculateBoardTotals(board) {
@@ -427,7 +429,12 @@
     document.getElementById('amendGlobalAllocationBtn').addEventListener('click', function() {
         const inp = document.getElementById('globalProjectAllocationInput');
         if (this.textContent === 'Amend') { this.textContent = 'Save'; inp.removeAttribute('disabled'); inp.focus(); }
-        else { this.textContent = 'Amend'; inp.setAttribute('disabled', 'true'); mockConfigAllocation = parseFloat(inp.value || 0); recalculateGlobalSpend(); }
+        else { 
+            this.textContent = 'Amend'; inp.setAttribute('disabled', 'true'); 
+            mockConfigAllocation = parseFloat(inp.value || 0); 
+            localStorage.setItem('refurb_global_allocation', mockConfigAllocation.toString());
+            recalculateGlobalSpend(); 
+        }
     });
 
     document.getElementById('addExpenseBtn').addEventListener('click', function() {
@@ -452,6 +459,9 @@
             actual: parseFloat(document.getElementById('expActual').value || 0)
         };
         mockExpensesDb.push(p);
+        // Save current expense array to memory disk
+        localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb));
+        
         renderExpenseToDOM(p);
         recalculateGlobalSpend();
 
@@ -470,6 +480,9 @@
             invoiceUrl: document.getElementById('supInvoiceUrl').value.trim()
         };
         invoiceRegistry.push(p);
+        // Save current invoice array to memory disk
+        localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry));
+        
         refreshSupplierTableViews();
 
         document.getElementById('supName').value = ''; document.getElementById('supInvoiceNo').value = ''; document.getElementById('supAmountPaid').value = ''; document.getElementById('supPaymentMethod').value = ''; document.getElementById('supInvoiceUrl').value = '';
