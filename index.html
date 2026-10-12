@@ -217,10 +217,10 @@
         "pm@refurb.com": { password: "pm123", role: "Project Manager" }
     };
 
-    // Pull directly from persistent browser disk, or default to zero/empty
-    let mockConfigAllocation = parseFloat(localStorage.getItem('refurb_global_allocation') || 0.00);
-    let mockExpensesDb = JSON.parse(localStorage.getItem('refurb_expenses_data') || '[]');
-    let invoiceRegistry = JSON.parse(localStorage.getItem('refurb_invoices_data') || '[]');
+    // Global configuration allocations
+    let mockConfigAllocation = 0.00;
+    let mockExpensesDb = [];
+    let invoiceRegistry = [];
     let activeUserRole = null;
 
     document.getElementById('loginSubmitBtn').addEventListener('click', function() {
@@ -245,6 +245,12 @@
 
     function synchroniseAppFromLocal() {
         document.getElementById('boardsContainer').innerHTML = '';
+        
+        // Explicitly reload the fresh storage variables right out of memory upon signing in
+        mockConfigAllocation = parseFloat(localStorage.getItem('refurb_global_allocation') || 0.00);
+        mockExpensesDb = JSON.parse(localStorage.getItem('refurb_expenses_data') || '[]');
+        invoiceRegistry = JSON.parse(localStorage.getItem('refurb_invoices_data') || '[]');
+        
         document.getElementById('globalProjectAllocationInput').value = mockConfigAllocation.toFixed(2);
         
         mockExpensesDb.forEach(item => { renderExpenseToDOM(item); });
@@ -252,9 +258,6 @@
         recalculateGlobalSpend();
     }
 <!-- END OF REFACTORED CHUNK 4 OF 6 -->
-
-
-
 
 // START OF REFACTORED CHUNK 5 OF 6
     function renderExpenseToDOM(item) {
