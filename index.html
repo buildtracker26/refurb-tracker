@@ -260,6 +260,10 @@
 <!-- END OF REFACTORED CHUNK 4 OF 6 -->
 
 // START OF REFACTORED CHUNK 5 OF 6
+    function commitExpensesToLocalStorage() {
+        localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb));
+    }
+
     function renderExpenseToDOM(item) {
         const groupName = (item.development_works || 'General').trim();
         const categoryId = 'board-' + groupName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
@@ -289,6 +293,7 @@
                     mockExpensesDb.forEach(rowItem => {
                         if (rowItem.development_works === groupName) rowItem.category_budget = nVal;
                     });
+                    commitExpensesToLocalStorage();
                     recalculateBoardTotals(targetBoard); recalculateGlobalSpend();
                 }
             });
@@ -334,6 +339,8 @@
             const bVal = dbRecord ? dbRecord.budget : parseFloat(row.querySelector('.live-budget-cell').textContent);
             const aVal = dbRecord ? dbRecord.actual : parseFloat(row.querySelector('.live-actual-cell').textContent);
             const v = bVal - aVal; cells[5].textContent = `£${v.toFixed(2)}`; cells[5].className = v >= 0 ? 'variance-good' : 'variance-bad';
+            
+            commitExpensesToLocalStorage();
             recalculateBoardTotals(board); recalculateGlobalSpend();
         }
     };
@@ -343,10 +350,10 @@
         const row = event.target.closest('tr'); const board = row.closest('.board-container');
         mockExpensesDb = mockExpensesDb.filter(r => r.id !== row.dataset.id);
         row.remove(); if (board.querySelectorAll('.board-table-body tr').length === 0) { board.remove(); } else { recalculateBoardTotals(board); }
+        commitExpensesToLocalStorage();
         recalculateGlobalSpend();
     };
 // END OF CHUNK 5 OF 6
-
 // START OF REFACTORED CHUNK 6 OF 6
     function refreshSupplierTableViews() {
         const pBody = document.getElementById('pendingSupplierTableBody'); const pPaid = document.getElementById('paidSupplierTableBody');
@@ -386,7 +393,6 @@
             rec.status = inputs[5].value;
             rec.invoiceUrl = inputs[6].value.trim();
             
-            // Auto-save edited invoice state array to browser storage
             localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry));
             refreshSupplierTableViews();
         }
@@ -462,35 +468,41 @@
             actual: parseFloat(document.getElementById('expActual').value || 0)
         };
         mockExpensesDb.push(p);
-        // Save current expense array to memory disk
-        localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb));
+        commitExpensesToLocalStorage();
         
-        renderExpenseToDOM(p);
+        // Dynamic re-render or initialization flush
+        document.getElementById('boardsContainer').innerHTML = '';
+        mockExpensesDb.forEach(item => { renderExpenseToDOM(item); });
         recalculateGlobalSpend();
-
-        document.getElementById('expItem').value = ''; document.getElementById('expBudget').value = ''; document.getElementById('expEstimated').value = ''; document.getElementById('expActual').value = '';
+        
+        // Reset row item fields except category groups to speed up quick input sequences
+        document.getElementById('expItem').value = '';
+        document.getElementById('expBudget').value = '';
+        document.getElementById('expEstimated').value = '';
+        document.getElementById('expActual').value = '';
     });
 
     document.getElementById('addSupplierBtn').addEventListener('click', function() {
         const p = {
-            id: 'local-' + Date.now(),
             date: document.getElementById('supDate').value,
-            name: document.getElementById('supName').value.trim(),
-            invoiceNo: document.getElementById('supInvoiceNo').value.trim(),
+            name: document.getElementById('supName').value.trim() || 'Generic Supplier',
+            invoiceNo: document.getElementById('supInvoiceNo').value.trim() || 'N/A',
             amountPaid: parseFloat(document.getElementById('supAmountPaid').value || 0).toFixed(2),
-            paymentMethod: document.getElementById('supPaymentMethod').value.trim(),
+            paymentMethod: document.getElementById('supPaymentMethod').value.trim() || 'Cash',
             status: document.getElementById('supStatus').value,
             invoiceUrl: document.getElementById('supInvoiceUrl').value.trim()
         };
         invoiceRegistry.push(p);
-        // Save current invoice array to memory disk
         localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry));
-        
         refreshSupplierTableViews();
-
-        document.getElementById('supName').value = ''; document.getElementById('supInvoiceNo').value = ''; document.getElementById('supAmountPaid').value = ''; document.getElementById('supPaymentMethod').value = ''; document.getElementById('supInvoiceUrl').value = '';
+        
+        document.getElementById('supName').value = '';
+        document.getElementById('supInvoiceNo').value = '';
+        document.getElementById('supAmountPaid').value = '';
+        document.getElementById('supPaymentMethod').value = '';
+        document.getElementById('supInvoiceUrl').value = '';
     });
 </script>
 </body>
 </html>
-<!-- END OF CHUNK 6 OF 6 -->
+<!-- END OF REFACTORED CHUNK 6 OF 6 --
