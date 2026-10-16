@@ -1,66 +1,14 @@
-<!-- START OF CHUNK 1 OF 6 -->
+<!-- === START OF CHUNK 1 OF 7 === -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>House Refurb Local Project Tracker</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f6f8fa; margin: 0; padding: 32px; color: #1f2937; }
-        .app-title { font-size: 1.65rem; font-weight: 700; color: #111827; margin-bottom: 16px; letter-spacing: -0.02em; }
-        .workbook-tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; }
-        .tab-btn { background-color: #e5e7eb; color: #4b5563; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
-        .tab-btn:hover { background-color: #d1d5db; color: #1f2937; }
-        .tab-btn.active-tab { background-color: #4c566a; color: #ffffff; }
-        .card-panel { background: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); padding: 28px; margin-bottom: 32px; }
-        .panel-heading { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #374151; margin-bottom: 16px; }
-        .form-row { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
-        .field-box { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 120px; }
-        .field-box label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #6b7280; letter-spacing: 0.04em; }
-        .field-box input, .field-box select { height: 44px; padding: 0 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.95rem; box-sizing: border-box; color: #374151; width: 100%; background-color: #fff; }
-        .add-btn { background-color: #3b4252; color: #ffffff; border: none; height: 44px; padding: 0 28px; border-radius: 6px; font-weight: 700; font-size: 0.95rem; cursor: pointer; white-space: nowrap; }
-        .board-container { border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); background: #ffffff; margin-bottom: 32px; border: 1px solid #e2e8f0; }
-        .board-header { background-color: #4c566a; color: #ffffff; padding: 16px 20px; font-weight: 700; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; }
-        .board-header-left { display: flex; align-items: center; gap: 16px; }
-        .cat-budget-display { font-size: 0.9rem; color: #e5e9f0; background: #3b4252; padding: 4px 10px; border-radius: 4px; font-weight: normal; display: flex; align-items: center; gap: 8px; }
-        .board-nav-btn { background: #3b4252; color: #ffffff; border: 1px solid #5e6b82; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; margin-left: 6px; font-weight: bold; }
-        .board-nav-btn:hover { background: #2e3440; }
-        .tracker-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .tracker-table th { background-color: #f1f5f9; color: #4b5563; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 14px 20px; border-bottom: 1px solid #e2e8f0; }
-        .tracker-table td { padding: 16px 20px; font-size: 0.95rem; color: #374151; border-bottom: 1px solid #f3f4f6; }
-        .subtotal-row { background-color: #f8fafc; font-weight: 700; border-top: 2px solid #cbd5e1; }
-        .subtotal-row td { padding: 14px 20px; font-size: 0.9rem; color: #1f2937; }
-        .variance-good { color: #10b981 !important; font-weight: 600; }
-        .variance-bad { color: #ef4444 !important; font-weight: 600; }
-        .amend-action-btn { background-color: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; margin-right: 6px; }
-        .amend-action-btn:hover { background-color: #e5e7eb; }
-        .delete-action-btn { background-color: #fff5f5; color: #ef4444; border: 1px solid #fee2e2; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; margin-right: 6px; }
-        .delete-action-btn:hover { background-color: #fee2e2; }
-        .inline-edit-input { width: 90%; padding: 4px 8px; border: 1px solid #4c566a; border-radius: 4px; font-size: 0.9rem; background: #fff; color: #000; }
-        .footer-banner { background-color: #2e3440; color: #ffffff; border-radius: 8px; padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); margin-top: 40px; }
-        .footer-top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 1px solid #4c566a; padding-bottom: 14px; }
-        .banner-label { font-size: 1.15rem; font-weight: 800; letter-spacing: 0.06em; color: #ffffff; }
-        .global-alignment-row { display: flex; width: 100%; align-items: center; box-sizing: border-box; }
-        .global-cell { font-size: 1.3rem; font-weight: 800; box-sizing: border-box; color: #f3f4f6; }
-        .global-cell label { display: block; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: #9ca3af; letter-spacing: 0.05em; margin-bottom: 4px; }
-        .total-amount-good { color: #a3be8c !important; }
-        .total-amount-bad { color: #bf616a !important; }
-        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e3440; display: flex; justify-content: center; align-items: center; z-index: 20000; }
-        .login-box { background: white; padding: 40px; border-radius: 12px; max-width: 400px; width: 100%; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); }
-        .login-box h3 { margin-top: 0; color: #2e3440; font-size: 1.4rem; margin-bottom: 24px; text-align: center; font-weight: 700; }
-        .login-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-        .login-field label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #4c566a; }
-        .login-field input { height: 44px; padding: 0 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.95rem; }
-        .login-btn { background-color: #4c566a; color: white; border: none; width: 100%; height: 46px; border-radius: 6px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 8px; }
-        .login-btn:hover { background-color: #3b4252; }
-        .error-msg { color: #ef4444; font-size: 0.85rem; font-weight: 600; text-align: center; margin-top: 12px; display: none; }
-        .hidden-pane { display: none !important; }
-        .user-badge { background: #3b4252; color: #e5e9f0; padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: 600; }
-    </style>
+    <title>Project Tracker</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<!-- END OF CHUNK 1 OF 6 -->
-<!-- START OF CHUNK 2 OF 6 -->
 <body>
+
 <div id="loginPrompt" class="login-overlay">
     <div class="login-box">
         <h3>Project Vault Login</h3>
@@ -76,433 +24,289 @@
         <div id="loginError" class="error-msg">Invalid credentials. Please try again.</div>
     </div>
 </div>
+<!-- === END OF CHUNK 1 OF 7 === -->
 
+
+<!-- === START OF CHUNK 2 OF 7 === -->
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-    <div class="app-title" style="margin-bottom: 0;">House Refurb Local Project Tracker</div>
+    <div class="app-title" style="margin-bottom: 0;">Project Tracker</div>
     <div id="userBadgeDisplay" class="user-badge hidden-pane">Connected as: Guest</div>
 </div>
-
 <div class="workbook-tabs">
     <button class="tab-btn active-tab" id="expensesTabBtn">🏠 Expenses Tracker</button>
     <button class="tab-btn" id="supplierTabBtn">🧾 Invoices</button>
 </div>
-
 <div id="expensesTabPane">
-    <div class="card-panel" style="padding: 20px 28px; margin-bottom: 20px; background-color: #f8fafc; border: 1px solid #e2e8f0;">
-        <div class="form-row" style="align-items: flex-end;">
-            <div class="field-box" style="max-width: 280px; flex: none;">
+    <div class="card-panel">
+        <div class="form-row">
+            <div class="field-box" style="max-width: 280px;">
                 <label style="color: #4c566a; font-weight: 700;">💰 Total Project Budget Allocation (£)</label>
                 <input type="number" id="globalProjectAllocationInput" value="0.00" step="0.01" disabled style="border: 2px solid #cbd5e1; font-weight: bold; font-size: 1.1rem; color: #2e3440; background-color: #e5e7eb;">
             </div>
-            <button class="add-btn" id="amendGlobalAllocationBtn" style="height: 44px; padding: 0 20px; background-color: #4c566a;">Amend</button>
-            <div style="flex: 4;"></div>
+            <button class="add-btn" id="amendGlobalAllocationBtn" style="background-color: #4c566a;">Amend</button>
         </div>
     </div>
-
-    <div class="card-panel" id="addExpenseFormPanel">
+    <div class="card-panel">
         <div class="panel-heading">Add New Expense Entry</div>
         <div class="form-row">
-            <div class="field-box" style="flex: 1.1;"><label>Date</label><input type="date" id="expDate" value="2026-09-24"></div>
-            <div class="field-box" style="flex: 1.4;"><label>Development Works</label><input type="text" id="expGroup" placeholder="e.g. Kitchen"></div>
-            <div class="field-box" style="flex: 1.2;"><label>Development Works Budget (£)</label><input type="number" id="catBudget" placeholder="If new group" step="0.01"></div>
-            <div class="field-box" style="flex: 1.8;"><label>Item / Task</label><input type="text" id="expItem" placeholder="e.g. Strip walls"></div>
-            <div class="field-box"><label>Budget (£)</label><input type="number" id="expBudget" placeholder="0.00" step="0.01"></div>
-            <div class="field-box"><label>Estimated (£)</label><input type="number" id="expEstimated" placeholder="0.00" step="0.01"></div>
-            <div class="field-box"><label>Actual (£)</label><input type="number" id="expActual" placeholder="0.00" step="0.01"></div>
+            <div class="field-box"><label>Date</label><input type="date" id="expDate" value="2026-09-24"></div>
+            <div class="field-box"><label>Development Works</label><input type="text" id="expGroup" placeholder="e.g. Kitchen"></div>
+            <div class="field-box"><label>Development Works Budget (£)</label><input type="number" id="catBudget" placeholder="If new group" step="0.01"></div>
+            <div class="field-box"><label>Item / Task</label><input type="text" id="expItem" placeholder="e.g. Strip walls"></div>
+            <div class="field-box"><label>Budget (£)</label><input type="number" id="expBudget" step="0.01" value="0.00"></div>
+            <div class="field-box"><label>Estimated (£)</label><input type="number" id="expEstimated" step="0.01" value="0.00"></div>
+            <div class="field-box"><label>Actual (£)</label><input type="number" id="expActual" step="0.01" value="0.00"></div>
             <button class="add-btn" id="addExpenseBtn">Add Entry</button>
         </div>
     </div>
-
     <div id="boardsContainer"></div>
-<!-- END OF CHUNK 2 OF 6 -->
-<!-- START OF CHUNK 3 OF 6 -->
+<!-- === END OF CHUNK 2 OF 7 === -->
+
+
+<!-- === START OF CHUNK 3 OF 7 === -->
     <div class="footer-banner">
-        <div class="footer-top-row">
-            <div class="banner-label">GRAND TOTALS</div>
-        </div>
+        <div class="footer-top-row"><div class="banner-label">GRAND TOTALS</div></div>
         <div class="global-alignment-row">
-            <div class="global-cell" style="width: 13%;"><label>Total Dev Budget</label><span id="globalDevWorksBudgetVal" style="color: #e5e9f0; font-size: 1.1rem;">£0.00</span></div>
-            <div class="global-cell" style="width: 13%;"><label>Unallocated Budget</label><span id="globalUnallocatedBudgetVal" style="font-size: 1.1rem;">£0.00</span></div>
-            <div class="global-cell" style="width: 13%;"><label>Total Spent So Far</label><span id="globalDevWorksSpentVal" style="font-size: 1.1rem;">£0.00</span></div>
-            <div class="global-cell" style="width: 13%;"><label>Total Remaining</label><span id="globalDevWorksRemVal" style="font-size: 1.1rem;">£0.00</span></div>
-            <div class="global-cell" style="width: 12%; padding-left: 10px;"><label>Total Item Budget</label><span id="globalBudgetVal">£0.00</span></div>
-            <div class="global-cell" style="width: 12%; padding-left: 10px;"><label>Total Estimated</label><span id="globalEstimatedVal">£0.00</span></div>
-            <div class="global-cell" style="width: 12%; padding-left: 10px;"><label>Actual Spend</label><span id="globalActualVal">£0.00</span></div>
-            <div class="global-cell" style="width: 12%; padding-left: 10px;"><label>Variance</label><span id="globalVarianceVal">£0.00</span></div>
+            <div class="global-cell"><label>Total Dev Budget</label><span id="globalDevWorksBudgetVal" style="color: #e5e9f0; font-size: 1.1rem;">£0.00</span></div>
+            <div class="global-cell"><label>Unallocated Budget</label><span id="globalUnallocatedBudgetVal" style="font-size: 1.1rem;">£0.00</span></div>
+            <div class="global-cell"><label>Total Spent So Far</label><span id="globalDevWorksSpentVal" style="font-size: 1.1rem;">£0.00</span></div>
+            <div class="global-cell"><label>Total Remaining</label><span id="globalDevWorksRemVal" style="font-size: 1.1rem;">£0.00</span></div>
+            <div class="global-cell"><label>Total Item Budget</label><span id="globalBudgetVal">£0.00</span></div>
+            <div class="global-cell"><label>Total Estimated</label><span id="globalEstimatedVal">£0.00</span></div>
+            <div class="global-cell"><label>Actual Spend</label><span id="globalActualVal">£0.00</span></div>
+            <div class="global-cell"><label>Variance</label><span id="globalVarianceVal">£0.00</span></div>
         </div>
     </div>
 </div>
 
 <div id="supplierTabPane" class="hidden-pane">
-    <div class="card-panel" id="addInvoiceFormPanel">
-        <div id="supplierFormTitle" class="panel-heading">Log Invoice</div>
+    <div class="card-panel">
+        <div class="panel-heading">Log Invoice</div>
         <div class="form-row">
-            <div class="field-box" style="flex: 1.1;"><label>Date</label><input type="date" id="supDate" value="2026-10-06"></div>
-            <div class="field-box" style="flex: 1.5;"><label>Supplier</label><input type="text" id="supName" placeholder="e.g. Buildbase"></div>
-            <div class="field-box" style="flex: 1.1;"><label>Invoice No</label><input type="text" id="supInvoiceNo" placeholder="e.g. INV-2001"></div>
-            <div class="field-box" style="flex: 1.1;"><label>Amount Paid (£)</label><input type="number" id="supAmountPaid" placeholder="0.00" step="0.01"></div>
-            <div class="field-box" style="flex: 1.3;"><label>Payment Method</label><input type="text" id="supPaymentMethod" placeholder="e.g. Credit Card"></div>
-            <div class="field-box" style="flex: 1.2;"><label>Status</label><select id="supStatus"><option value="Paid">Paid</option><option value="Pending">Pending</option></select></div>
-            <div class="field-box" style="flex: 2;"><label>Invoice Web Link (Google Drive URL)</label><input type="text" id="supInvoiceUrl" placeholder="Paste link here"></div>
+            <div class="field-box"><label>Date</label><input type="date" id="supDate" value="2026-10-06"></div>
+            <div class="field-box"><label>Supplier</label><input type="text" id="supName" placeholder="e.g. Buildbase"></div>
+            <div class="field-box"><label>Invoice No</label><input type="text" id="supInvoiceNo" placeholder="e.g. INV-2001"></div>
+            <div class="field-box"><label>Amount Paid (£)</label><input type="number" id="supAmountPaid" step="0.01" value="0.00"></div>
+            <div class="field-box"><label>Payment Method</label><input type="text" id="supPaymentMethod" placeholder="e.g. Credit Card"></div>
+            <div class="field-box"><label>Status</label><select id="supStatus"><option value="Paid">Paid</option><option value="Pending">Pending</option></select></div>
+            <div class="field-box" style="flex: 2;"><label>Invoice Link</label><input type="text" id="supInvoiceUrl" placeholder="Google Drive URL"></div>
             <button class="add-btn" id="addSupplierBtn">Log Invoice</button>
         </div>
     </div>
-    <div class="board-container" id="pendingLedgerContainer" style="margin-bottom: 24px; border: 1px solid #d08770;">
-        <div class="board-header" style="background-color: #d08770;"><span>⏳ Pending Invoices Ledger</span></div>
+<!-- === END OF CHUNK 3 OF 7 === -->
+<!-- === START OF CHUNK 4 OF 7 === -->
+    <div class="board-container" style="border: 1px solid #d08770; margin-bottom: 24px;">
+        <div class="board-header" style="background-color: #d08770;">⏳ Pending Invoices Ledger</div>
         <table class="tracker-table">
-            <thead>
-                <tr>
-                    <th style="width: 11%;">Date</th>
-                    <th style="width: 18%;">Supplier</th>
-                    <th style="width: 12%;">Invoice No</th>
-                    <th style="width: 12%;">Amount Due</th>
-                    <th style="width: 13%;">Payment Method</th>
-                    <th style="width: 11%;">Status</th>
-                    <th style="width: 10%;">Document</th>
-                    <th style="width: 13%;">Action</th>
-                </tr>
-            </thead>
+            <thead><tr><th>Date</th><th>Supplier</th><th>Invoice No</th><th>Amount Due</th><th>Method</th><th>Status</th><th>Doc</th><th>Action</th></tr></thead>
             <tbody id="pendingSupplierTableBody"></tbody>
-            <tfoot>
-                <tr class="subtotal-row">
-                    <td colspan="3" style="text-align: right; color: #4b5563; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Total Pending:</td>
-                    <td id="pendingTotalCell" style="color: #d08770; font-weight: 700;">£0.00</td>
-                    <td colspan="4"></td>
-                </tr>
-            </tfoot>
+            <tfoot><tr class="subtotal-row"><td colspan="3" style="text-align: right;">Total Pending:</td><td id="pendingTotalCell" style="color: #d08770;">£0.00</td><td colspan="4"></td></tr></tfoot>
         </table>
     </div>
-    <div class="board-container" id="paidLedgerContainer" style="border: 1px solid #a3be8c;">
-        <div class="board-header" style="background-color: #a3be8c; color: #2e3440;"><span>✅ Paid Invoices Ledger</span></div>
+    <div class="board-container" style="border: 1px solid #a3be8c;">
+        <div class="board-header" style="background-color: #a3be8c; color: #2e3440;">✅ Paid Invoices Ledger</div>
         <table class="tracker-table">
-            <thead>
-                <tr>
-                    <th style="width: 11%;">Date</th>
-                    <th style="width: 18%;">Supplier</th>
-                    <th style="width: 12%;">Invoice No</th>
-                    <th style="width: 12%;">Amount Paid</th>
-                    <th style="width: 13%;">Payment Method</th>
-                    <th style="width: 11%;">Status</th>
-                    <th style="width: 10%;">Document</th>
-                    <th style="width: 13%;">Action</th>
-                </tr>
-            </thead>
+            <thead><tr><th>Date</th><th>Supplier</th><th>Invoice No</th><th>Amount Paid</th><th>Method</th><th>Status</th><th>Doc</th><th>Action</th></tr></thead>
             <tbody id="paidSupplierTableBody"></tbody>
-            <tfoot>
-                <tr class="subtotal-row">
-                    <td colspan="3" style="text-align: right; color: #4b5563; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Total Paid:</td>
-                    <td id="paidTotalCell" style="color: #10b981; font-weight: 700;">£0.00</td>
-                    <td colspan="4"></td>
-                </tr>
-            </tfoot>
+            <tfoot><tr class="subtotal-row"><td colspan="3" style="text-align: right;">Total Paid:</td><td id="paidTotalCell" style="color: #10b981;">£0.00</td><td colspan="4"></td></tr></tfoot>
         </table>
     </div>
 </div>
-<!-- END OF CHUNK 3 OF 6 -->
+<!-- === END OF CHUNK 4 OF 7 === -->
 
-<!-- START OF REFACTORED CHUNK 4 OF 6 -->
+
+<!-- === START OF CHUNK 5 OF 7 === -->
 <script>
-    // Tab switching event rules
-    document.getElementById('expensesTabBtn').addEventListener('click', function() {
-        this.classList.add('active-tab'); document.getElementById('supplierTabBtn').classList.remove('active-tab');
-        document.getElementById('expensesTabPane').classList.remove('hidden-pane'); document.getElementById('supplierTabPane').classList.add('hidden-pane');
-    });
-    document.getElementById('supplierTabBtn').addEventListener('click', function() {
-        this.classList.add('active-tab'); document.getElementById('expensesTabBtn').classList.remove('active-tab');
-        document.getElementById('supplierTabPane').classList.remove('hidden-pane'); document.getElementById('expensesTabPane').classList.add('hidden-pane');
-    });
+    const el = id => document.getElementById(id);
 
-    // Single Authorized Operator Access Profile
-    const TEAM_ACCOUNTS = {
-        "pm@refurb.com": { password: "pm123", role: "Project Manager" }
-    };
+    el('expensesTabBtn').onclick = () => { el('expensesTabBtn').classList.add('active-tab'); el('supplierTabBtn').classList.remove('active-tab'); el('expensesTabPane').classList.remove('hidden-pane'); el('supplierTabPane').classList.add('hidden-pane'); };
+    el('supplierTabBtn').onclick = () => { el('supplierTabBtn').classList.add('active-tab'); el('expensesTabBtn').classList.remove('active-tab'); el('supplierTabPane').classList.remove('hidden-pane'); el('expensesTabPane').classList.add('hidden-pane'); };
 
-    // Global configuration allocations
+    const TEAM_ACCOUNTS = { "pm@refurb.com": { password: "pm123", role: "Project Manager" } };
     let mockConfigAllocation = 0.00;
     let mockExpensesDb = [];
     let invoiceRegistry = [];
-    let activeUserRole = null;
 
-    document.getElementById('loginSubmitBtn').addEventListener('click', function() {
-        const emailInput = document.getElementById('loginEmail').value.trim();
-        const passwordInput = document.getElementById('loginPassword').value;
-        const errorDiv = document.getElementById('loginError');
+    // Force title text layout explicitly
+    document.title = "Project Tracker";
 
-        if (TEAM_ACCOUNTS[emailInput] && TEAM_ACCOUNTS[emailInput].password === passwordInput) {
-            activeUserRole = TEAM_ACCOUNTS[emailInput].role;
-            errorDiv.style.display = 'none';
-            document.getElementById('loginPrompt').remove();
-            
-            const badge = document.getElementById('userBadgeDisplay');
-            badge.textContent = 'Connected as: ' + activeUserRole;
-            badge.classList.remove('hidden-pane');
-
-            synchroniseAppFromLocal();
-        } else {
-            errorDiv.style.display = 'block';
+    window.addEventListener("load", () => {
+        const titleEl = document.querySelector('.app-title');
+        if (titleEl) titleEl.textContent = "Project Tracker";
+        
+        // Explicitly attach sign-in listener
+        const loginBtn = el('loginSubmitBtn');
+        if (loginBtn) {
+            loginBtn.onclick = () => {
+                let u = el('loginEmail').value.trim();
+                let p = el('loginPassword').value;
+                if (TEAM_ACCOUNTS[u] && TEAM_ACCOUNTS[u].password === p) {
+                    el('loginPrompt').remove(); 
+                    el('userBadgeDisplay').textContent = "Connected as: Project Manager"; 
+                    el('userBadgeDisplay').classList.remove('hidden-pane');
+                    synchroniseAppFromLocal();
+                } else { 
+                    el('loginError').style.display = 'block'; 
+                }
+            };
         }
     });
 
     function synchroniseAppFromLocal() {
-        document.getElementById('boardsContainer').innerHTML = '';
-        
-        // Explicitly reload the fresh storage variables right out of memory upon signing in
+        el('boardsContainer').innerHTML = '';
         mockConfigAllocation = parseFloat(localStorage.getItem('refurb_global_allocation') || 0.00);
         mockExpensesDb = JSON.parse(localStorage.getItem('refurb_expenses_data') || '[]');
         invoiceRegistry = JSON.parse(localStorage.getItem('refurb_invoices_data') || '[]');
-        
-        document.getElementById('globalProjectAllocationInput').value = mockConfigAllocation.toFixed(2);
-        
+        el('globalProjectAllocationInput').value = mockConfigAllocation.toFixed(2);
         mockExpensesDb.forEach(item => { renderExpenseToDOM(item); });
         refreshSupplierTableViews();
         recalculateGlobalSpend();
     }
-<!-- END OF REFACTORED CHUNK 4 OF 6 -->
+<!-- === END OF CHUNK 5 OF 7 === -->
 
-// START OF REFACTORED CHUNK 5 OF 6
-    function commitExpensesToLocalStorage() {
-        localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb));
-    }
 
+
+// <!-- === START OF CHUNK 6 OF 7 === -->
     function renderExpenseToDOM(item) {
         const groupName = (item.development_works || 'General').trim();
         const categoryId = 'board-' + groupName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-        let targetBoard = document.getElementById(categoryId);
-        const cbValue = parseFloat(item.category_budget || 0).toFixed(2);
-
+        let targetBoard = el(categoryId);
         if (!targetBoard) {
-            targetBoard = document.createElement('div');
-            targetBoard.className = 'board-container';
-            targetBoard.id = categoryId;
-            let headerActions = '<button class="board-nav-btn edit-cat-btn" style="margin:0; padding:2px 6px; font-size:0.75rem;">Amend</button>';
-
-            targetBoard.innerHTML = `
-                <div class="board-header"><div class="board-header-left"><span>${groupName}</span><span class="cat-budget-display">Budget: £<span class="cat-budget-num">${cbValue}</span>${headerActions}</span></div>
-                <div><button class="board-nav-btn move-up-btn">▲</button><button class="board-nav-btn move-down-btn">▼</button></div></div>
-                <table class="tracker-table"><thead><tr><th style="width:14%;">Date</th><th style="width:28%;">Item / Task</th><th style="width:13%;">Budget</th><th style="width:13%;">Estimated</th><th style="width:13%;">Actual</th><th style="width:13%;">Variance</th><th style="width:13%;">Action</th></tr></thead>
-                <tbody class="board-table-body"></tbody><tfoot><tr class="subtotal-row"><td colspan="2" style="text-align:right;">Totals:</td><td class="subtotal-budget-val">£0.00</td><td class="subtotal-estimated-val">£0.00</td><td class="subtotal-actual-val">£0.00</td><td class="subtotal-variance-val">£0.00</td><td></td></tr></tfoot></table>`;
-
-            targetBoard.querySelector('.move-up-btn').addEventListener('click', () => { const p = targetBoard.previousElementSibling; if (p) targetBoard.parentNode.insertBefore(targetBoard, p); });
-            targetBoard.querySelector('.move-down-btn').addEventListener('click', () => { const n = targetBoard.nextElementSibling; if (n) targetBoard.parentNode.insertBefore(n, targetBoard); });
-
-            targetBoard.querySelector('.edit-cat-btn').addEventListener('click', (e) => {
-                const btn = e.target; const numSpan = targetBoard.querySelector('.cat-budget-num');
-                if (btn.textContent === 'Amend') { btn.textContent = 'Save'; numSpan.innerHTML = `<input type="number" class="inline-edit-input" style="width:70px;" step="0.01" value="${numSpan.textContent}">`; }
-                else {
-                    btn.textContent = 'Amend'; const nVal = parseFloat(numSpan.querySelector('input').value || 0); numSpan.textContent = nVal.toFixed(2);
-                    mockExpensesDb.forEach(rowItem => {
-                        if (rowItem.development_works === groupName) rowItem.category_budget = nVal;
-                    });
-                    commitExpensesToLocalStorage();
-                    recalculateBoardTotals(targetBoard); recalculateGlobalSpend();
-                }
-            });
-            document.getElementById('boardsContainer').appendChild(targetBoard);
+            targetBoard = document.createElement('div'); targetBoard.className = 'board-container'; targetBoard.id = categoryId;
+            targetBoard.innerHTML = `<div class="board-header"><div><span>\${groupName}</span> <span class="cat-budget-display">Budget: £<span class="cat-budget-num">\${parseFloat(item.category_budget || 0).toFixed(2)}</span> <button class="board-nav-btn edit-cat-btn">Amend</button></span></div><div><button class="board-nav-btn up-btn">▲</button><button class="board-nav-btn down-btn">▼</button></div></div><table class="tracker-table"><thead><tr><th>Date</th><th>Item / Task</th><th>Budget</th><th>Estimated</th><th>Actual</th><th>Variance</th><th>Action</th></tr></thead><tbody class="board-table-body"></tbody><tfoot><tr class="subtotal-row"><td colspan="2" style="text-align:right;">Totals:</td><td class="s-b">£0.00</td><td class="s-e">£0.00</td><td class="s-a">£0.00</td><td class="s-v">£0.00</td><td></td></tr></tfoot></table>`;
+            targetBoard.querySelector('.up-btn').onclick = () => { let p = targetBoard.previousElementSibling; if (p) targetBoard.parentNode.insertBefore(targetBoard, p); };
+            targetBoard.querySelector('.down-btn').onclick = () => { let n = targetBoard.nextElementSibling; if (n) targetBoard.parentNode.insertBefore(n, targetBoard); };
+            targetBoard.querySelector('.edit-cat-btn').onclick = (e) => {
+                let span = targetBoard.querySelector('.cat-budget-num');
+                if (e.target.textContent === 'Amend') { e.target.textContent = 'Save'; span.innerHTML = `<input type="number" style="width:70px;" value="\${span.textContent}">`; }
+                else { e.target.textContent = 'Amend'; let val = parseFloat(span.querySelector('input').value || 0); span.textContent = val.toFixed(2); mockExpensesDb.filter(r => r.development_works === groupName).forEach(r => r.category_budget = val); localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb)); recalculateGlobalSpend(); }
+            };
+            el('boardsContainer').appendChild(targetBoard);
         }
-
-        const tbody = targetBoard.querySelector('.board-table-body');
-        const row = document.createElement('tr'); row.className = 'data-item-row'; row.dataset.id = item.id;
-        const b = parseFloat(item.budget || 0), e = parseFloat(item.estimated || 0), a = parseFloat(item.actual || 0), v = b - a;
-        let controls = `<button class="amend-action-btn" onclick="amendExpenseInline(event)">Amend</button><button class="delete-action-btn" onclick="deleteExpenseRow(event)">Delete</button>`;
-
-        row.innerHTML = `<td>${item.entry_date}</td><td>${item.item_task}</td><td>£<span class="live-budget-cell">${b.toFixed(2)}</span></td><td>£<span class="live-estimated-cell">${e.toFixed(2)}</span></td><td>£<span class="live-actual-cell">${a.toFixed(2)}</span></td><td class="${v >= 0 ? 'variance-good' : 'variance-bad'}">£${v.toFixed(2)}</td><td>${controls}</td>`;
-        tbody.appendChild(row); recalculateBoardTotals(targetBoard);
-    }
-
-    window.amendExpenseInline = function(event) {
-        const btn = event.target; const row = btn.closest('tr'); const rId = row.dataset.id; const board = row.closest('.board-container'); const cells = row.querySelectorAll('td');
-        const dbRecord = mockExpensesDb.find(r => r.id === rId);
-
-        if (btn.textContent === 'Amend') {
-            btn.textContent = 'Save';
-            const cB = row.querySelector('.live-budget-cell').textContent, cE = row.querySelector('.live-estimated-cell').textContent, cA = row.querySelector('.live-actual-cell').textContent;
-            cells[0].innerHTML = `<input type="date" class="inline-edit-input" value="${cells[0].textContent}">`; 
-            cells[1].innerHTML = `<input type="text" class="inline-edit-input" value="${cells[1].textContent}">`; 
-            cells[2].innerHTML = `<input type="number" class="inline-edit-input" value="${cB}">`; 
-            cells[3].innerHTML = `<input type="number" class="inline-edit-input" value="${cE}">`; 
-            cells[4].innerHTML = `<input type="number" class="inline-edit-input" value="${cA}">`; 
-        } else {
-            btn.textContent = 'Amend'; const inputs = row.querySelectorAll('input');
-            if(dbRecord) { 
-                dbRecord.entry_date = inputs[0].value; 
-                dbRecord.item_task = inputs[1].value.trim(); 
-                dbRecord.budget = parseFloat(inputs[2].value || 0); 
-                dbRecord.estimated = parseFloat(inputs[3].value || 0); 
-                dbRecord.actual = parseFloat(inputs[4].value || 0); 
-            }
-            cells[0].textContent = inputs[0].value; 
-            cells[1].textContent = inputs[1].value.trim(); 
-            cells[2].innerHTML = `£<span class="live-budget-cell">${parseFloat(inputs[2].value).toFixed(2)}</span>`; 
-            cells[3].innerHTML = `£<span class="live-estimated-cell">${parseFloat(inputs[3].value).toFixed(2)}</span>`; 
-            cells[4].innerHTML = `£<span class="live-actual-cell">${parseFloat(inputs[4].value).toFixed(2)}</span>`; 
-            
-            const bVal = dbRecord ? dbRecord.budget : parseFloat(row.querySelector('.live-budget-cell').textContent);
-            const aVal = dbRecord ? dbRecord.actual : parseFloat(row.querySelector('.live-actual-cell').textContent);
-            const v = bVal - aVal; cells[5].textContent = `£${v.toFixed(2)}`; cells[5].className = v >= 0 ? 'variance-good' : 'variance-bad';
-            
-            commitExpensesToLocalStorage();
-            recalculateBoardTotals(board); recalculateGlobalSpend();
-        }
-    };
-
-    window.deleteExpenseRow = function(event) {
-        if (!confirm("Delete task?")) return;
-        const row = event.target.closest('tr'); const board = row.closest('.board-container');
-        mockExpensesDb = mockExpensesDb.filter(r => r.id !== row.dataset.id);
-        row.remove(); if (board.querySelectorAll('.board-table-body tr').length === 0) { board.remove(); } else { recalculateBoardTotals(board); }
-        commitExpensesToLocalStorage();
-        recalculateGlobalSpend();
-    };
-// END OF CHUNK 5 OF 6
-// START OF REFACTORED CHUNK 6 OF 6
-    function refreshSupplierTableViews() {
-        const pBody = document.getElementById('pendingSupplierTableBody'); const pPaid = document.getElementById('paidSupplierTableBody');
-        if (!pBody || !pPaid) return; pBody.innerHTML = ''; pPaid.innerHTML = ''; let pSum = 0, dSum = 0;
-        invoiceRegistry.forEach((inv, i) => {
-            const amt = parseFloat(inv.amountPaid || 0); const link = inv.invoiceUrl ? `<a href="${inv.invoiceUrl}" target="_blank">View</a>` : 'None';
-            const tr = document.createElement('tr'); tr.dataset.index = i;
-            tr.innerHTML = `<td class="v-date">${inv.date}</td><td class="v-name">${inv.name}</td><td class="v-no">${inv.invoiceNo}</td><td class="v-amt">£${amt.toFixed(2)}</td><td class="v-method">${inv.paymentMethod}</td><td class="v-status">${inv.status}</td><td class="v-url">${link}</td><td><button class="amend-action-btn" onclick="amendInvoiceInline(event)">Amend</button><button class="delete-action-btn" onclick="deleteInvoiceRecord(${i})">Remove</button></td>`;
-            if (inv.status === 'Paid') { dSum += amt; pPaid.appendChild(tr); } else { pSum += amt; pBody.appendChild(tr); }
-        });
-        document.getElementById('pendingTotalCell').textContent = `£${pSum.toFixed(2)}`; document.getElementById('paidTotalCell').textContent = `£${dSum.toFixed(2)}`;
-    }
-
-    window.amendInvoiceInline = function(e) {
-        const btn = e.target; const row = btn.closest('tr'); const idx = parseInt(row.dataset.index); const rec = invoiceRegistry[idx];
-        const cells = row.querySelectorAll('td');
+        let row = document.createElement('tr'); row.id = 'r-' + item.id; let v = parseFloat(item.budget || 0) - parseFloat(item.actual || 0);
+        row.innerHTML = `<td>\${item.entry_date}</td><td>\${item.item_task}</td><td>£\${parseFloat(item.budget || 0).toFixed(2)}</td><td>£\${parseFloat(item.estimated || 0).toFixed(2)}</td><td>£\${parseFloat(item.actual || 0).toFixed(2)}</td><td class="\${v >= 0 ? 'variance-good' : 'variance-bad'}">£\${v.toFixed(2)}</td><td><button class="amend-btn-inline">Amend</button><button class="del-btn-inline">Delete</button></td>`;
+        row.querySelector('.del-btn-inline').onclick = () => { if (confirm("Delete task?")) { mockExpensesDb = mockExpensesDb.filter(x => x.id !== item.id); localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb)); row.remove(); if (targetBoard.querySelectorAll('.board-table-body tr').length === 0) targetBoard.remove(); else recalculateBoardTotals(targetBoard); recalculateGlobalSpend(); } };
         
-        if (btn.textContent === 'Amend') {
-            btn.textContent = 'Save';
-            cells[0].innerHTML = `<input type="date" class="inline-edit-input" value="${rec.date}">`;
-            cells[1].innerHTML = `<input type="text" class="inline-edit-input" value="${rec.name}">`;
-            cells[2].innerHTML = `<input type="text" class="inline-edit-input" value="${rec.invoiceNo}">`;
-            cells[3].innerHTML = `<input type="number" step="0.01" class="inline-edit-input" value="${parseFloat(rec.amountPaid || 0)}">`;
-            cells[4].innerHTML = `<input type="text" class="inline-edit-input" value="${rec.paymentMethod}">`;
-            const paidSel = rec.status === 'Paid' ? 'selected' : '';
-            const pendSel = rec.status === 'Pending' ? 'selected' : '';
-            cells[5].innerHTML = `<select class="inline-edit-input" style="height:32px;"><option value="Paid" ${paidSel}>Paid</option><option value="Pending" ${pendSel}>Pending</option></select>`;
-            cells[6].innerHTML = `<input type="text" class="inline-edit-input" value="${rec.invoiceUrl}" placeholder="Paste URL">`;
-        } else {
-            btn.textContent = 'Amend';
-            const inputs = row.querySelectorAll('input, select');
-            rec.date = inputs[0].value;
-            rec.name = inputs[1].value.trim();
-            rec.invoiceNo = inputs[2].value.trim();
-            rec.amountPaid = parseFloat(inputs[3].value || 0).toFixed(2);
-            rec.paymentMethod = inputs[4].value.trim();
-            rec.status = inputs[5].value;
-            rec.invoiceUrl = inputs[6].value.trim();
-            
-            localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry));
-            refreshSupplierTableViews();
-        }
-    };
+        row.querySelector('.amend-btn-inline').onclick = (e) => {
+            let cells = row.querySelectorAll('td');
+            if (e.target.textContent === 'Amend') {
+                e.target.textContent = 'Save';
+                cells.item(0).innerHTML = `<input type="date" value="\${item.entry_date}">`; 
+                cells.item(1).innerHTML = `<input type="text" value="\${item.item_task}">`;
+                cells.item(2).innerHTML = `<input type="number" value="\${item.budget}">`; 
+                cells.item(3).innerHTML = `<input type="number" value="\${item.estimated}">`; 
+                cells.item(4).innerHTML = `<input type="number" value="\${item.actual}">`;
+            } else {
+                e.target.textContent = 'Amend'; 
+                let inputs = row.querySelectorAll('input');
+                item.entry_date = inputs.item(0).value; 
+                item.item_task = inputs.item(1).value.trim(); 
+                item.budget = parseFloat(inputs.item(2).value || 0); 
+                item.estimated = parseFloat(inputs.item(3).value || 0); 
+                item.actual = parseFloat(inputs.item(4).value || 0);
+                localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb)); 
+                synchroniseAppFromLocal();
+            }
+        };
+        targetBoard.querySelector('.board-table-body').appendChild(row); 
+        recalculateBoardTotals(targetBoard);
+    }
 
-    window.deleteInvoiceRecord = function(i) {
-        if (!confirm("Remove invoice record?")) return;
-        invoiceRegistry.splice(i, 1);
-        localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry));
-        refreshSupplierTableViews();
-    };
-
-    function recalculateBoardTotals(board) {
-        let b = 0, e = 0, a = 0;
-        board.querySelectorAll('.board-table-body tr').forEach(r => {
-            const bCell = r.querySelector('.live-budget-cell'); const eCell = r.querySelector('.live-estimated-cell'); const aCell = r.querySelector('.live-actual-cell');
-            if (bCell) b += parseFloat(bCell.textContent || 0); if (eCell) e += parseFloat(eCell.textContent || 0); if (aCell) a += parseFloat(aCell.textContent || 0);
+    function recalculateBoardTotals(b) {
+        let tb = 0, te = 0, ta = 0;
+        b.querySelectorAll('.board-table-body tr').forEach(r => { let id = r.id.replace('r-', ''); let item = mockExpensesDb.find(x => x.id === id); if (item) { tb += parseFloat(item.budget || 0); te += parseFloat(item.estimated || 0); ta += parseFloat(item.actual || 0); } });
+        b.querySelector('.s-b').textContent = '£' + tb.toFixed(2); b.querySelector('.s-e').textContent = '£' + te.toFixed(2); b.querySelector('.s-a').textContent = '£' + ta.toFixed(2);
+        let v = tb - ta; b.querySelector('.s-v').textContent = '£' + v.toFixed(2); b.querySelector('.s-v').className = 's-v ' + (v >= 0 ? 'variance-good' : 'variance-bad');
+    }
+// <!-- === END OF CHUNK 6 OF 7 === -->
+// <!-- === START OF CHUNK 7 OF 7 === -->
+    function refreshSupplierTableViews() {
+        el('pendingSupplierTableBody').innerHTML = ''; el('paidSupplierTableBody').innerHTML = ''; let pSum = 0, dSum = 0;
+        invoiceRegistry.forEach((inv, i) => {
+            let tr = document.createElement('tr'), amt = parseFloat(inv.amountPaid || 0);
+            tr.innerHTML = `<td>\${inv.date}</td><td>\${inv.name}</td><td>\${inv.invoiceNo}</td><td>£\${amt.toFixed(2)}</td><td>\${inv.paymentMethod}</td><td>\${inv.status}</td><td>\${inv.invoiceUrl ? `<a href="\${inv.invoiceUrl}" target="_blank">View</a>` : 'None'}</td><td><button class="amend-inv">Amend</button><button class="del-inv">Remove</button></td>`;
+            tr.querySelector('.del-inv').onclick = () => { if (confirm("Remove invoice?")) { invoiceRegistry.splice(i, 1); localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry)); refreshSupplierTableViews(); } };
+            tr.querySelector('.amend-inv').onclick = (e) => {
+                let cells = tr.querySelectorAll('td');
+                if (e.target.textContent === 'Amend') {
+                    e.target.textContent = 'Save';
+                    cells.item(0).innerHTML = `<input type="date" value="\${inv.date}">`; 
+                    cells.item(1).innerHTML = `<input type="text" value="\${inv.name}">`; 
+                    cells.item(2).innerHTML = `<input type="text" value="\${inv.invoiceNo}">`;
+                    cells.item(3).innerHTML = `<input type="number" value="\${inv.amountPaid}">`; 
+                    cells.item(4).innerHTML = `<input type="text" value="\${inv.paymentMethod}">`;
+                    cells.item(5).innerHTML = `<select><option value="Paid" \${inv.status === 'Paid' ? 'selected' : ''}>Paid</option><option value="Pending" \${inv.status === 'Pending' ? 'selected' : ''}>Pending</option></select>`;
+                    cells.item(6).innerHTML = `<input type="text" value="\${inv.invoiceUrl || ''}">`;
+                } else {
+                    e.target.textContent = 'Amend'; 
+                    let inputs = tr.querySelectorAll('input, select');
+                    inv.date = inputs.item(0).value; 
+                    inv.name = inputs.item(1).value.trim(); 
+                    inv.invoiceNo = inputs.item(2).value.trim(); 
+                    inv.amountPaid = parseFloat(inputs.item(3).value || 0); 
+                    inv.paymentMethod = inputs.item(4).value.trim(); 
+                    inv.status = inputs.item(5).value; 
+                    inv.invoiceUrl = inputs.item(6).value.trim();
+                    localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry)); 
+                    refreshSupplierTableViews();
+                }
+            };
+            if (inv.status === 'Paid') { dSum += amt; el('paidSupplierTableBody').appendChild(tr); } else { pSum += amt; el('pendingSupplierTableBody').appendChild(tr); }
         });
-        board.querySelector('.subtotal-budget-val').textContent = `£${b.toFixed(2)}`;
-        board.querySelector('.subtotal-estimated-val').textContent = `£${e.toFixed(2)}`;
-        board.querySelector('.subtotal-actual-val').textContent = `£${a.toFixed(2)}`;
-        const v = b - a; const vc = board.querySelector('.subtotal-variance-val'); vc.textContent = `£${v.toFixed(2)}`; vc.className = v >= 0 ? 'subtotal-variance-val variance-good' : 'subtotal-variance-val variance-bad';
+        el('pendingTotalCell').textContent = '£' + pSum.toFixed(2); el('paidTotalCell').textContent = '£' + dSum.toFixed(2);
     }
 
     function recalculateGlobalSpend() {
-        let gAlloc = parseFloat(document.getElementById('globalProjectAllocationInput').value || 0), dB = 0, iB = 0, eT = 0, aT = 0;
-        document.querySelectorAll('.board-container').forEach(board => {
-            const catNum = board.querySelector('.cat-budget-num');
-            const subB = board.querySelector('.subtotal-budget-val'); const subE = board.querySelector('.subtotal-estimated-val'); const subA = board.querySelector('.subtotal-actual-val');
-            if (catNum) dB += parseFloat(catNum.textContent || 0);
-            if (subB) iB += parseFloat(subB.textContent.replace('£', '') || 0);
-            if (subE) eT += parseFloat(subE.textContent.replace('£', '') || 0);
-            if (subA) aT += parseFloat(subA.textContent.replace('£', '') || 0);
-        });
-        document.getElementById('globalDevWorksBudgetVal').textContent = `£${dB.toFixed(2)}`;
-        document.getElementById('globalUnallocatedBudgetVal').textContent = `£${(gAlloc - dB).toFixed(2)}`;
-        document.getElementById('globalDevWorksSpentVal').textContent = `£${aT.toFixed(2)}`;
-        document.getElementById('globalDevWorksRemVal').textContent = `£${(gAlloc - aT).toFixed(2)}`;
-        document.getElementById('globalBudgetVal').textContent = `£${iB.toFixed(2)}`; document.getElementById('globalEstimatedVal').textContent = `£${eT.toFixed(2)}`; document.getElementById('globalActualVal').textContent = `£${aT.toFixed(2)}`;
-        document.getElementById('globalVarianceVal').textContent = `£${(iB - aT).toFixed(2)}`;
+        let gAlloc = mockConfigAllocation, dB = 0, iB = 0, eT = 0, aT = 0;
+        document.querySelectorAll('.board-container').forEach(b => { if (b.querySelector('.cat-budget-num')) dB += parseFloat(b.querySelector('.cat-budget-num').textContent || 0); });
+        mockExpensesDb.forEach(x => { iB += parseFloat(x.budget || 0); eT += parseFloat(x.estimated || 0); aT += parseFloat(x.actual || 0); });
+        el('globalDevWorksBudgetVal').textContent = '£' + dB.toFixed(2); el('globalUnallocatedBudgetVal').textContent = '£' + (gAlloc - dB).toFixed(2);
+        el('globalDevWorksSpentVal').textContent = '£' + aT.toFixed(2); el('globalDevWorksRemVal').textContent = '£' + (gAlloc - aT).toFixed(2);
+        el('globalBudgetVal').textContent = '£' + iB.toFixed(2); el('globalEstimatedVal').textContent = '£' + eT.toFixed(2); el('globalActualVal').textContent = '£' + aT.toFixed(2);
+        el('globalVarianceVal').textContent = '£' + (iB - aT).toFixed(2);
     }
 
-    document.getElementById('amendGlobalAllocationBtn').addEventListener('click', function() {
-        const inp = document.getElementById('globalProjectAllocationInput');
-        if (this.textContent === 'Amend') { this.textContent = 'Save'; inp.removeAttribute('disabled'); inp.focus(); }
-        else { 
-            this.textContent = 'Amend'; inp.setAttribute('disabled', 'true'); 
-            mockConfigAllocation = parseFloat(inp.value || 0); 
-            localStorage.setItem('refurb_global_allocation', mockConfigAllocation.toString());
-            recalculateGlobalSpend(); 
+    el('amendGlobalAllocationBtn').onclick = (e) => {
+        if (e.target.textContent === 'Amend') { e.target.textContent = 'Save'; el('globalProjectAllocationInput').removeAttribute('disabled'); el('globalProjectAllocationInput').focus(); }
+        else { e.target.textContent = 'Amend'; el('globalProjectAllocationInput').setAttribute('disabled', 'true'); mockConfigAllocation = parseFloat(el('globalProjectAllocationInput').value || 0); localStorage.setItem('refurb_global_allocation', mockConfigAllocation.toString()); recalculateGlobalSpend(); }
+    };
+
+    el('addExpenseBtn').onclick = () => {
+        let g = (el('expGroup').value || 'General').trim(), cb = parseFloat(el('catBudget').value || 0);
+        let match = el('board-' + g.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase());
+        if (match && match.querySelector('.cat-budget-num')) {
+            cb = parseFloat(match.querySelector('.cat-budget-num').textContent || 0);
         }
-    });
+        mockExpensesDb.push({ 
+            id: 'exp-' + Date.now(), 
+            entry_date: el('expDate').value, 
+            development_works: g, 
+            category_budget: cb, 
+            item_task: el('expItem').value.trim(), 
+            budget: parseFloat(el('expBudget').value || 0), 
+            estimated: parseFloat(el('expEstimated').value || 0), 
+            actual: parseFloat(el('expActual').value || 0) 
+        });
+        localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb)); 
+        synchroniseAppFromLocal();
+        el('expItem').value = ''; el('expBudget').value = '0.00'; el('expEstimated').value = '0.00'; el('expActual').value = '0.00';
+    };
 
-    document.getElementById('addExpenseBtn').addEventListener('click', function() {
-        const groupInput = (document.getElementById('expGroup').value || 'General').trim();
-        const catBudgetInput = parseFloat(document.getElementById('catBudget').value || 0);
-        
-        let finalCatBudget = catBudgetInput;
-        const matchingBoard = document.getElementById('board-' + groupInput.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase());
-        if (matchingBoard) {
-            const activeSpan = matchingBoard.querySelector('.cat-budget-num');
-            if (activeSpan) finalCatBudget = parseFloat(activeSpan.textContent || 0);
-        }
-
-        const p = {
-            id: 'local-' + Date.now(),
-            entry_date: document.getElementById('expDate').value,
-            development_works: groupInput,
-            category_budget: finalCatBudget,
-            item_task: document.getElementById('expItem').value.trim(),
-            budget: parseFloat(document.getElementById('expBudget').value || 0),
-            estimated: parseFloat(document.getElementById('expEstimated').value || 0),
-            actual: parseFloat(document.getElementById('expActual').value || 0)
-        };
-        mockExpensesDb.push(p);
-        commitExpensesToLocalStorage();
-        
-        // Dynamic re-render or initialization flush
-        document.getElementById('boardsContainer').innerHTML = '';
-        mockExpensesDb.forEach(item => { renderExpenseToDOM(item); });
-        recalculateGlobalSpend();
-        
-        // Reset row item fields except category groups to speed up quick input sequences
-        document.getElementById('expItem').value = '';
-        document.getElementById('expBudget').value = '';
-        document.getElementById('expEstimated').value = '';
-        document.getElementById('expActual').value = '';
-    });
-
-    document.getElementById('addSupplierBtn').addEventListener('click', function() {
-        const p = {
-            date: document.getElementById('supDate').value,
-            name: document.getElementById('supName').value.trim() || 'Generic Supplier',
-            invoiceNo: document.getElementById('supInvoiceNo').value.trim() || 'N/A',
-            amountPaid: parseFloat(document.getElementById('supAmountPaid').value || 0).toFixed(2),
-            paymentMethod: document.getElementById('supPaymentMethod').value.trim() || 'Cash',
-            status: document.getElementById('supStatus').value,
-            invoiceUrl: document.getElementById('supInvoiceUrl').value.trim()
-        };
-        invoiceRegistry.push(p);
-        localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry));
+    el('addSupplierBtn').onclick = () => {
+        invoiceRegistry.push({ 
+            date: el('supDate').value, 
+            name: el('supName').value.trim(), 
+            invoiceNo: el('supInvoiceNo').value.trim(), 
+            amountPaid: parseFloat(el('supAmountPaid').value || 0), 
+            paymentMethod: el('supPaymentMethod').value.trim(), 
+            status: el('supStatus').value, 
+            invoiceUrl: el('supInvoiceUrl').value.trim() 
+        });
+        localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry)); 
         refreshSupplierTableViews();
-        
-        document.getElementById('supName').value = '';
-        document.getElementById('supInvoiceNo').value = '';
-        document.getElementById('supAmountPaid').value = '';
-        document.getElementById('supPaymentMethod').value = '';
-        document.getElementById('supInvoiceUrl').value = '';
-    });
+        el('supName').value = ''; el('supInvoiceNo').value = ''; el('supAmountPaid').value = '0.00'; el('supPaymentMethod').value = ''; el('supInvoiceUrl').value = '';
+    };
 </script>
 </body>
 </html>
-<!-- END OF REFACTORED CHUNK 6 OF 6 --
+<!-- === END OF CHUNK 7 OF 7 === -->
