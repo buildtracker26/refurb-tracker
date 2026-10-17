@@ -116,6 +116,7 @@
 
 
 <!-- === START OF CHUNK 5 OF 7 === -->
+<!-- === START OF CHUNK 5 OF 7 === -->
 <script>
     const el = id => document.getElementById(id);
 
@@ -130,27 +131,28 @@
     // Force title text layout explicitly
     document.title = "Project Tracker";
 
+    // Set page typography labels on load
     window.addEventListener("load", () => {
         const titleEl = document.querySelector('.app-title');
         if (titleEl) titleEl.textContent = "Project Tracker";
-        
-        // Explicitly attach sign-in listener
-        const loginBtn = el('loginSubmitBtn');
-        if (loginBtn) {
-            loginBtn.onclick = () => {
-                let u = el('loginEmail').value.trim();
-                let p = el('loginPassword').value;
-                if (TEAM_ACCOUNTS[u] && TEAM_ACCOUNTS[u].password === p) {
-                    el('loginPrompt').remove(); 
-                    el('userBadgeDisplay').textContent = "Connected as: Project Manager"; 
-                    el('userBadgeDisplay').classList.remove('hidden-pane');
-                    synchroniseAppFromLocal();
-                } else { 
-                    el('loginError').style.display = 'block'; 
-                }
-            };
-        }
     });
+
+    // EXPLICIT IMMEDIATE INTERACTION BINDING (Moved outside load wrapper to fix lockout bug)
+    const loginBtn = el('loginSubmitBtn');
+    if (loginBtn) {
+        loginBtn.onclick = () => {
+            let u = el('loginEmail').value.trim().toLowerCase(); // Lowercase patch applied for safety
+            let p = el('loginPassword').value;
+            if (TEAM_ACCOUNTS[u] && TEAM_ACCOUNTS[u].password === p) {
+                el('loginPrompt').remove(); 
+                el('userBadgeDisplay').textContent = "Connected as: Project Manager"; 
+                el('userBadgeDisplay').classList.remove('hidden-pane');
+                synchroniseAppFromLocal();
+            } else { 
+                el('loginError').style.display = 'block'; 
+            }
+        };
+    }
 
     function synchroniseAppFromLocal() {
         el('boardsContainer').innerHTML = '';
@@ -158,10 +160,15 @@
         mockExpensesDb = JSON.parse(localStorage.getItem('refurb_expenses_data') || '[]');
         invoiceRegistry = JSON.parse(localStorage.getItem('refurb_invoices_data') || '[]');
         el('globalProjectAllocationInput').value = mockConfigAllocation.toFixed(2);
+        
+        // AUTOMATIC CHRONOLOGICAL SORTING FOR EXPENSES (OLDEST TO NEWEST)
+        mockExpensesDb.sort((a, b) => (a.entry_date > b.entry_date) ? 1 : ((b.entry_date > a.entry_date) ? -1 : 0));
+        
         mockExpensesDb.forEach(item => { renderExpenseToDOM(item); });
         refreshSupplierTableViews();
         recalculateGlobalSpend();
     }
+<!-- === END OF CHUNK 5 OF 7 === -->
 <!-- === END OF CHUNK 5 OF 7 === -->
 
 
