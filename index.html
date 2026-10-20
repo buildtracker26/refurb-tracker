@@ -324,7 +324,7 @@
         b.querySelector('.s-v').textContent = '£' + v.toFixed(2); 
         b.querySelector('.s-v').className = 's-v ' + ((v >= 0) ? 'variance-good' : 'variance-bad');
     }
-// <!-- === START OF CHUNK 7 OF 7 === -->
+/ <!-- === START OF CHUNK 7 OF 8 === -->
     function refreshSupplierTableViews() {
         if (el('pendingSupplierTableBody')) el('pendingSupplierTableBody').innerHTML = ''; 
         if (el('paidSupplierTableBody')) el('paidSupplierTableBody').innerHTML = ''; 
@@ -416,7 +416,8 @@
         if (el('globalActualVal')) el('globalActualVal').textContent = '£' + aT.toFixed(2);
         if (el('globalVarianceVal')) el('globalVarianceVal').textContent = '£' + (iB - aT).toFixed(2);
     }
-
+// <!-- === END OF CHUNK 7 OF 8 === -->
+// <!-- === START OF CHUNK 8 OF 8 === -->
     if (el('amendGlobalAllocationBtn')) {
         el('amendGlobalAllocationBtn').onclick = function(e) {
             if (e.target.textContent === 'Amend') { 
@@ -431,6 +432,43 @@
                 recalculateGlobalSpend(); 
             }
         };
+    }
+
+    // AUTO-PROTECT EXISTING GROUP BUDGETS ON INPUT
+    if (el('expGroup')) {
+        el('expGroup').oninput = function() {
+            var groupVal = (el('expGroup').value || '').trim();
+            var targetId = 'board-' + groupVal.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+            var match = el(targetId);
+            
+            if (match && match.querySelector('.cat-budget-num')) {
+                var existingBudget = match.querySelector('.cat-budget-num').textContent;
+                el('catBudget').value = parseFloat(existingBudget).toFixed(2);
+                el('catBudget').setAttribute('disabled', 'true');
+                el('catBudget').style.backgroundColor = '#e5e7eb';
+            } else {
+                el('catBudget').removeAttribute('disabled');
+                el('catBudget').style.backgroundColor = '';
+            }
+        };
+    }
+
+    // FIX AUTO-CLEARING FOR 0.00 INPUT FIELDS
+    var numericInputs = ['expBudget', 'expEstimated', 'expActual', 'supAmountPaid'];
+    for (var k = 0; k < numericInputs.length; k++) {
+        var inputEl = el(numericInputs[k]);
+        if (inputEl) {
+            inputEl.onfocus = function() {
+                if (this.value === '0.00' || parseFloat(this.value) === 0) {
+                    this.value = '';
+                }
+            };
+            inputEl.onblur = function() {
+                if (this.value.trim() === '') {
+                    this.value = '0.00';
+                }
+            };
+        }
     }
 
     if (el('addExpenseBtn')) {
@@ -461,6 +499,9 @@
             el('expBudget').value = '0.00'; 
             el('expEstimated').value = '0.00'; 
             el('expActual').value = '0.00';
+            el('catBudget').removeAttribute('disabled');
+            el('catBudget').style.backgroundColor = '';
+            el('catBudget').value = '';
         };
     }
 
@@ -489,4 +530,4 @@
 </script>
 </body>
 </html>
-<!-- === END OF CHUNK 7 OF 7 === -->
+<!-- === END OF CHUNK 8 OF 8 === -->
