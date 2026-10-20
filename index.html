@@ -114,97 +114,179 @@
 </div>
 <!-- === END OF CHUNK 4 OF 7 === -->
 
-
 <!-- === START OF CHUNK 5 OF 7 === -->
-
 <script>
-    const el = id => document.getElementById(id);
+    // Safe utility selector function
+    function el(id) { 
+        return document.getElementById(id); 
+    }
 
-    el('expensesTabBtn').onclick = () => { el('expensesTabBtn').classList.add('active-tab'); el('supplierTabBtn').classList.remove('active-tab'); el('expensesTabPane').classList.remove('hidden-pane'); el('supplierTabPane').classList.add('hidden-pane'); };
-    el('supplierTabBtn').onclick = () => { el('supplierTabBtn').classList.add('active-tab'); el('expensesTabBtn').classList.remove('active-tab'); el('supplierTabPane').classList.remove('hidden-pane'); el('expensesTabPane').classList.add('hidden-pane'); };
+    // Tab Switching Mechanics
+    if (el('expensesTabBtn')) {
+        el('expensesTabBtn').onclick = function() {
+            el('expensesTabBtn').classList.add('active-tab');
+            el('supplierTabBtn').classList.remove('active-tab');
+            el('expensesTabPane').classList.remove('hidden-pane');
+            el('supplierTabPane').classList.add('hidden-pane');
+        };
+    }
+    if (el('supplierTabBtn')) {
+        el('supplierTabBtn').onclick = function() {
+            el('supplierTabBtn').classList.add('active-tab');
+            el('expensesTabBtn').classList.remove('active-tab');
+            el('supplierTabPane').classList.remove('hidden-pane');
+            el('expensesTabPane').classList.add('hidden-pane');
+        };
+    }
 
-    const TEAM_ACCOUNTS = { "pm@refurb.com": { password: "pm123", role: "Project Manager" } };
-    let mockConfigAllocation = 0.00;
-    let mockExpensesDb = [];
-    let invoiceRegistry = [];
+    // Static Local Auth Profiles
+    var TEAM_ACCOUNTS = { 
+        "pm@refurb.com": { password: "pm123", role: "Project Manager" } 
+    };
+    
+    var mockConfigAllocation = 0.00;
+    var mockExpensesDb = [];
+    var invoiceRegistry = [];
 
-    // Force title text layout explicitly
     document.title = "Project Tracker";
 
-    // Set page typography labels on load
-    window.addEventListener("load", () => {
-        const titleEl = document.querySelector('.app-title');
-        if (titleEl) titleEl.textContent = "Project Tracker";
-    });
+    // CLEAN LOGIN HANDLER: Fires immediately on button click
+    if (el('loginSubmitBtn')) {
+        el('loginSubmitBtn').onclick = function() {
+            var userInput = el('loginEmail').value.trim().toLowerCase();
+            var passInput = el('loginPassword').value;
 
-    // EXPLICIT IMMEDIATE INTERACTION BINDING (Fixed login lockout bug)
-    const loginBtn = el('loginSubmitBtn');
-    if (loginBtn) {
-        loginBtn.onclick = () => {
-            let u = el('loginEmail').value.trim().toLowerCase(); 
-            let p = el('loginPassword').value;
-            if (TEAM_ACCOUNTS[u] && TEAM_ACCOUNTS[u].password === p) {
-                el('loginPrompt').remove(); 
-                el('userBadgeDisplay').textContent = "Connected as: Project Manager"; 
-                el('userBadgeDisplay').classList.remove('hidden-pane');
+            if (TEAM_ACCOUNTS[userInput] && TEAM_ACCOUNTS[userInput].password === passInput) {
+                // Clear the frozen screen instantly
+                if (el('loginPrompt')) {
+                    el('loginPrompt').style.display = 'none';
+                }
+                if (el('userBadgeDisplay')) {
+                    el('userBadgeDisplay').textContent = "Connected as: Project Manager";
+                    el('userBadgeDisplay').classList.remove('hidden-pane');
+                }
+                // Bootstrap application state from local storage safely
                 synchroniseAppFromLocal();
-            } else { 
-                el('loginError').style.display = 'block'; 
+            } else {
+                if (el('loginError')) {
+                    el('loginError').style.display = 'block';
+                }
             }
         };
     }
 
+    // Main App Synchronization from Local Storage
     function synchroniseAppFromLocal() {
-        el('boardsContainer').innerHTML = '';
+        if (el('boardsContainer')) {
+            el('boardsContainer').innerHTML = '';
+        }
+        
         mockConfigAllocation = parseFloat(localStorage.getItem('refurb_global_allocation') || 0.00);
         mockExpensesDb = JSON.parse(localStorage.getItem('refurb_expenses_data') || '[]');
         invoiceRegistry = JSON.parse(localStorage.getItem('refurb_invoices_data') || '[]');
-        el('globalProjectAllocationInput').value = mockConfigAllocation.toFixed(2);
         
-        // AUTOMATIC CHRONOLOGICAL SORTING FOR EXPENSES (OLDEST TO NEWEST)
-        mockExpensesDb.sort((a, b) => (a.entry_date > b.entry_date) ? 1 : ((b.entry_date > a.entry_date) ? -1 : 0));
+        if (el('globalProjectAllocationInput')) {
+            el('globalProjectAllocationInput').value = mockConfigAllocation.toFixed(2);
+        }
         
-        mockExpensesDb.forEach(item => { renderExpenseToDOM(item); });
-        refreshSupplierTableViews();
-        recalculateGlobalSpend();
+        // Render rows out directly from client database array
+        for (var i = 0; i < mockExpensesDb.length; i++) {
+            renderExpenseToDOM(mockExpensesDb[i]);
+        }
+        
+        if (typeof refreshSupplierTableViews === 'function') {
+            refreshSupplierTableViews();
+        }
+        if (typeof recalculateGlobalSpend === 'function') {
+            recalculateGlobalSpend();
+        }
     }
-
 <!-- === END OF CHUNK 5 OF 7 === -->
-
-
 // <!-- === START OF CHUNK 6 OF 7 === -->
     function renderExpenseToDOM(item) {
-        const groupName = (item.development_works || 'General').trim();
-        const categoryId = 'board-' + groupName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-        let targetBoard = el(categoryId);
+        var groupName = (item.development_works || 'General').trim();
+        var categoryId = 'board-' + groupName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+        var targetBoard = el(categoryId);
+        
         if (!targetBoard) {
-            targetBoard = document.createElement('div'); targetBoard.className = 'board-container'; targetBoard.id = categoryId;
-            targetBoard.innerHTML = `<div class="board-header"><div><span>${groupName}</span> <span class="cat-budget-display">Budget: £<span class="cat-budget-num">${parseFloat(item.category_budget || 0).toFixed(2)}</span> <button class="board-nav-btn edit-cat-btn">Amend</button></span></div><div><button class="board-nav-btn up-btn">▲</button><button class="board-nav-btn down-btn">▼</button></div></div><table class="tracker-table"><thead><tr><th>Date</th><th>Item / Task</th><th>Budget</th><th>Estimated</th><th>Actual</th><th>Variance</th><th>Action</th></tr></thead><tbody class="board-table-body"></tbody><tfoot><tr class="subtotal-row"><td colspan="2" style="text-align:right;">Totals:</td><td class="s-b">£0.00</td><td class="s-e">£0.00</td><td class="s-a">£0.00</td><td class="s-v">£0.00</td><td></td></tr></tfoot></table>`;
-            targetBoard.querySelector('.up-btn').onclick = () => { let p = targetBoard.previousElementSibling; if (p) targetBoard.parentNode.insertBefore(targetBoard, p); };
-            targetBoard.querySelector('.down-btn').onclick = () => { let n = targetBoard.nextElementSibling; if (n) targetBoard.parentNode.insertBefore(n, targetBoard); };
-            targetBoard.querySelector('.edit-cat-btn').onclick = (e) => {
-                let span = targetBoard.querySelector('.cat-budget-num');
-                if (e.target.textContent === 'Amend') { e.target.textContent = 'Save'; span.innerHTML = `<input type="number" style="width:70px;" value="${span.textContent}">`; }
-                else { e.target.textContent = 'Amend'; let val = parseFloat(span.querySelector('input').value || 0); span.textContent = val.toFixed(2); mockExpensesDb.filter(r => r.development_works === groupName).forEach(r => r.category_budget = val); localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb)); recalculateGlobalSpend(); }
+            targetBoard = document.createElement('div'); 
+            targetBoard.className = 'board-container'; 
+            targetBoard.id = categoryId;
+            
+            var initialBudget = parseFloat(item.category_budget || 0).toFixed(2);
+            
+            targetBoard.innerHTML = '<div class="board-header"><div><span>' + groupName + '</span> <span class="cat-budget-display">Budget: £<span class="cat-budget-num">' + initialBudget + '</span> <button class="board-nav-btn edit-cat-btn">Amend</button></span></div><div><button class="board-nav-btn up-btn">▲</button><button class="board-nav-btn down-btn">▼</button></div></div><table class="tracker-table"><thead><tr><th>Date</th><th>Item / Task</th><th>Budget</th><th>Estimated</th><th>Actual</th><th>Variance</th><th>Action</th></tr></thead><tbody class="board-table-body"></tbody><tfoot><tr class="subtotal-row"><td colspan="2" style="text-align:right;">Totals:</td><td class="s-b">£0.00</td><td class="s-e">£0.00</td><td class="s-a">£0.00</td><td class="s-v">£0.00</td><td></td></tr></tfoot></table>';
+            
+            targetBoard.querySelector('.up-btn').onclick = function() { 
+                var p = targetBoard.previousElementSibling; 
+                if (p) targetBoard.parentNode.insertBefore(targetBoard, p); 
+            };
+            targetBoard.querySelector('.down-btn').onclick = function() { 
+                var n = targetBoard.nextElementSibling; 
+                if (n) targetBoard.parentNode.insertBefore(n, targetBoard); 
+            };
+            
+            targetBoard.querySelector('.edit-cat-btn').onclick = function(e) {
+                var span = targetBoard.querySelector('.cat-budget-num');
+                if (e.target.textContent === 'Amend') { 
+                    e.target.textContent = 'Save'; 
+                    span.innerHTML = '<input type="number" style="width:70px;" value="' + span.textContent + '">'; 
+                } else { 
+                    e.target.textContent = 'Amend'; 
+                    var val = parseFloat(span.querySelector('input').value || 0); 
+                    span.textContent = val.toFixed(2); 
+                    
+                    for (var i = 0; i < mockExpensesDb.length; i++) {
+                        if (mockExpensesDb[i].development_works === groupName) {
+                            mockExpensesDb[i].category_budget = val;
+                        }
+                    }
+                    localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb)); 
+                    recalculateGlobalSpend(); 
+                }
             };
             el('boardsContainer').appendChild(targetBoard);
         }
-        let row = document.createElement('tr'); row.id = 'r-' + item.id; let v = parseFloat(item.budget || 0) - parseFloat(item.actual || 0);
-        row.innerHTML = `<td>${item.entry_date}</td><td>${item.item_task}</td><td>£${parseFloat(item.budget || 0).toFixed(2)}</td><td>£${parseFloat(item.estimated || 0).toFixed(2)}</td><td>£${parseFloat(item.actual || 0).toFixed(2)}</td><td class="${v >= 0 ? 'variance-good' : 'variance-bad'}">£${v.toFixed(2)}</td><td><button class="amend-btn-inline">Amend</button><button class="del-btn-inline">Delete</button></td>`;
-        row.querySelector('.del-btn-inline').onclick = () => { if (confirm("Delete task?")) { mockExpensesDb = mockExpensesDb.filter(x => x.id !== item.id); localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb)); row.remove(); if (targetBoard.querySelectorAll('.board-table-body tr').length === 0) targetBoard.remove(); else recalculateBoardTotals(targetBoard); recalculateGlobalSpend(); } };
         
-        row.querySelector('.amend-btn-inline').onclick = (e) => {
-            let cells = row.querySelectorAll('td');
+        var row = document.createElement('tr'); 
+        row.id = 'r-' + item.id; 
+        var v = parseFloat(item.budget || 0) - parseFloat(item.actual || 0);
+        var varianceClass = (v >= 0) ? 'variance-good' : 'variance-bad';
+        
+        row.innerHTML = '<td>' + item.entry_date + '</td><td>' + item.item_task + '</td><td>£' + parseFloat(item.budget || 0).toFixed(2) + '</td><td>£' + parseFloat(item.estimated || 0).toFixed(2) + '</td><td>£' + parseFloat(item.actual || 0).toFixed(2) + '</td><td class="' + varianceClass + '">£' + v.toFixed(2) + '</td><td><button class="amend-btn-inline">Amend</button><button class="del-btn-inline">Delete</button></td>';
+        
+        row.querySelector('.del-btn-inline').onclick = function() { 
+            if (confirm("Delete task?")) { 
+                var newDb = [];
+                for (var i = 0; i < mockExpensesDb.length; i++) {
+                    if (mockExpensesDb[i].id !== item.id) {
+                        newDb.push(mockExpensesDb[i]);
+                    }
+                }
+                mockExpensesDb = newDb;
+                localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb)); 
+                row.remove(); 
+                if (targetBoard.querySelectorAll('.board-table-body tr').length === 0) {
+                    targetBoard.remove(); 
+                } else {
+                    recalculateBoardTotals(targetBoard); 
+                }
+                recalculateGlobalSpend(); 
+            } 
+        };
+        
+        row.querySelector('.amend-btn-inline').onclick = function(e) {
+            var cells = row.querySelectorAll('td');
             if (e.target.textContent === 'Amend') {
                 e.target.textContent = 'Save';
-                cells.item(0).innerHTML = `<input type="date" value="${item.entry_date}">`; 
-                cells.item(1).innerHTML = `<input type="text" value="${item.item_task}">`;
-                cells.item(2).innerHTML = `<input type="number" value="${item.budget}">`; 
-                cells.item(3).innerHTML = `<input type="number" value="${item.estimated}">`; 
-                cells.item(4).innerHTML = `<input type="number" value="${item.actual}">`;
+                cells.item(0).innerHTML = '<input type="date" value="' + item.entry_date + '">'; 
+                cells.item(1).innerHTML = '<input type="text" value="' + item.item_task + '">';
+                cells.item(2).innerHTML = '<input type="number" value="' + item.budget + '">'; 
+                cells.item(3).innerHTML = '<input type="number" value="' + item.estimated + '">'; 
+                cells.item(4).innerHTML = '<input type="number" value="' + item.actual + '">';
             } else {
                 e.target.textContent = 'Amend'; 
-                let inputs = row.querySelectorAll('input');
+                var inputs = row.querySelectorAll('input');
                 item.entry_date = inputs.item(0).value; 
                 item.item_task = inputs.item(1).value.trim(); 
                 item.budget = parseFloat(inputs.item(2).value || 0); 
@@ -214,109 +296,196 @@
                 synchroniseAppFromLocal();
             }
         };
+        
         targetBoard.querySelector('.board-table-body').appendChild(row); 
         recalculateBoardTotals(targetBoard);
     }
 
     function recalculateBoardTotals(b) {
-        let tb = 0, te = 0, ta = 0;
-        b.querySelectorAll('.board-table-body tr').forEach(r => { 
-            let id = r.id.replace('r-', ''); 
-            let item = mockExpensesDb.find(x => String(x.id) === String(id)); 
-            if (item) { tb += parseFloat(item.budget || 0); te += parseFloat(item.estimated || 0); ta += parseFloat(item.actual || 0); } 
-        });
-        b.querySelector('.s-b').textContent = '£' + tb.toFixed(2); b.querySelector('.s-e').textContent = '£' + te.toFixed(2); b.querySelector('.s-a').textContent = '£' + ta.toFixed(2);
-        let v = tb - ta; b.querySelector('.s-v').textContent = '£' + v.toFixed(2); b.querySelector('.s-v').className = 's-v ' + (v >= 0 ? 'variance-good' : 'variance-bad');
-    } 
-// <!-- === END OF CHUNK 6 OF 7 === -->
-
-// <!-- === START OF CHUNK 7 OF 7 === -->
-      function refreshSupplierTableViews() {
-        el('pendingSupplierTableBody').innerHTML = ''; el('paidSupplierTableBody').innerHTML = ''; let pSum = 0, dSum = 0;
-        invoiceRegistry.forEach((inv, i) => {
-            let tr = document.createElement('tr'), amt = parseFloat(inv.amountPaid || 0);
-            tr.innerHTML = `<td>${inv.date}</td><td>${inv.name}</td><td>${inv.invoiceNo}</td><td>£${amt.toFixed(2)}</td><td>${inv.paymentMethod}</td><td>${inv.status}</td><td>${inv.invoiceUrl ? `<a href="\${inv.invoiceUrl}" target="_blank">View</a>` : 'None'}</td><td><button class="amend-inv">Amend</button><button class="del-inv">Remove</button></td>`;
-            tr.querySelector('.del-inv').onclick = () => { if (confirm("Remove invoice?")) { invoiceRegistry.splice(i, 1); localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry)); refreshSupplierTableViews(); } };
-            tr.querySelector('.amend-inv').onclick = (e) => {
-                let cells = tr.querySelectorAll('td');
-                if (e.target.textContent === 'Amend') {
-                    e.target.textContent = 'Save';
-                    cells.item(0).innerHTML = `<input type="date" value="${inv.date}">`; 
-                    cells.item(1).innerHTML = `<input type="text" value="${inv.name}">`; 
-                    cells.item(2).innerHTML = `<input type="text" value="${inv.invoiceNo}">`;
-                    cells.item(3).innerHTML = `<input type="number" value="${inv.amountPaid}">`; 
-                    cells.item(4).innerHTML = `<input type="text" value="${inv.paymentMethod}">`;
-                    cells.item(5).innerHTML = `<select><option value="Paid" ${inv.status === 'Paid' ? 'selected' : ''}>Paid</option><option value="Pending" ${inv.status === 'Pending' ? 'selected' : ''}>Pending</option></select>`;
-                    cells.item(6).innerHTML = `<input type="text" value="${inv.invoiceUrl || ''}">`;
-                } else {
-                    e.target.textContent = 'Amend'; 
-                    let inputs = tr.querySelectorAll('input, select');
-                    inv.date = inputs.item(0).value; 
-                    inv.name = inputs.item(1).value.trim(); 
-                    inv.invoiceNo = inputs.item(2).value.trim(); 
-                    inv.amountPaid = parseFloat(inputs.item(3).value || 0); 
-                    inv.paymentMethod = inputs.item(4).value.trim(); 
-                    inv.status = inputs.item(5).value; 
-                    inv.invoiceUrl = inputs.item(6).value.trim();
-                    localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry)); 
-                    refreshSupplierTableViews();
+        var tb = 0, te = 0, ta = 0;
+        var rows = b.querySelectorAll('.board-table-body tr');
+        
+        for (var i = 0; i < rows.length; i++) {
+            var rowId = rows[i].id.replace('r-', '');
+            for (var j = 0; j < mockExpensesDb.length; j++) {
+                if (String(mockExpensesDb[j].id) === String(rowId)) {
+                    tb += parseFloat(mockExpensesDb[j].budget || 0);
+                    te += parseFloat(mockExpensesDb[j].estimated || 0);
+                    ta += parseFloat(mockExpensesDb[j].actual || 0);
                 }
-            };
-            if (inv.status === 'Paid') { dSum += amt; el('paidSupplierTableBody').appendChild(tr); } else { pSum += amt; el('pendingSupplierTableBody').appendChild(tr); }
-        });
-        el('pendingTotalCell').textContent = '£' + pSum.toFixed(2); el('paidTotalCell').textContent = '£' + dSum.toFixed(2);
+            }
+        }
+        
+        b.querySelector('.s-b').textContent = '£' + tb.toFixed(2); 
+        b.querySelector('.s-e').textContent = '£' + te.toFixed(2); 
+        b.querySelector('.s-a').textContent = '£' + ta.toFixed(2);
+        
+        var v = tb - ta; 
+        b.querySelector('.s-v').textContent = '£' + v.toFixed(2); 
+        b.querySelector('.s-v').className = 's-v ' + ((v >= 0) ? 'variance-good' : 'variance-bad');
+    }
+// <!-- === START OF CHUNK 7 OF 7 === -->
+    function refreshSupplierTableViews() {
+        if (el('pendingSupplierTableBody')) el('pendingSupplierTableBody').innerHTML = ''; 
+        if (el('paidSupplierTableBody')) el('paidSupplierTableBody').innerHTML = ''; 
+        
+        var pSum = 0, dSum = 0;
+        
+        for (var i = 0; i < invoiceRegistry.length; i++) {
+            (function(inv, index) {
+                var tr = document.createElement('tr');
+                var amt = parseFloat(inv.amountPaid || 0);
+                var docLink = inv.invoiceUrl ? '<a href="' + inv.invoiceUrl + '" target="_blank">View</a>' : 'None';
+                
+                tr.innerHTML = '<td>' + inv.date + '</td><td>' + inv.name + '</td><td>' + inv.invoiceNo + '</td><td>£' + amt.toFixed(2) + '</td><td>' + inv.paymentMethod + '</td><td>' + inv.status + '</td><td>' + docLink + '</td><td><button class="amend-inv">Amend</button><button class="del-inv">Remove</button></td>';
+                
+                tr.querySelector('.del-inv').onclick = function() { 
+                    if (confirm("Remove invoice?")) { 
+                        invoiceRegistry.splice(index, 1); 
+                        localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry)); 
+                        refreshSupplierTableViews(); 
+                    } 
+                };
+                
+                tr.querySelector('.amend-inv').onclick = function(e) {
+                    var cells = tr.querySelectorAll('td');
+                    if (e.target.textContent === 'Amend') {
+                        e.target.textContent = 'Save';
+                        cells.item(0).innerHTML = '<input type="date" value="' + inv.date + '">'; 
+                        cells.item(1).innerHTML = '<input type="text" value="' + inv.name + '">'; 
+                        cells.item(2).innerHTML = '<input type="text" value="' + inv.invoiceNo + '">';
+                        cells.item(3).innerHTML = '<input type="number" value="' + inv.amountPaid + '">'; 
+                        cells.item(4).innerHTML = '<input type="text" value="' + inv.paymentMethod + '">';
+                        
+                        var optPaid = (inv.status === 'Paid') ? 'selected' : '';
+                        var optPending = (inv.status === 'Pending') ? 'selected' : '';
+                        cells.item(5).innerHTML = '<select><option value="Paid" ' + optPaid + '>Paid</option><option value="Pending" ' + optPending + '>Pending</option></select>';
+                        cells.item(6).innerHTML = '<input type="text" value="' + (inv.invoiceUrl || '') + '">';
+                    } else {
+                        e.target.textContent = 'Amend'; 
+                        var inputs = tr.querySelectorAll('input, select');
+                        inv.date = inputs.item(0).value; 
+                        inv.name = inputs.item(1).value.trim(); 
+                        inv.invoiceNo = inputs.item(2).value.trim(); 
+                        inv.amountPaid = parseFloat(inputs.item(3).value || 0); 
+                        inv.paymentMethod = inputs.item(4).value.trim(); 
+                        inv.status = inputs.item(5).value; 
+                        inv.invoiceUrl = inputs.item(6).value.trim();
+                        localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry)); 
+                        refreshSupplierTableViews();
+                    }
+                };
+                
+                if (inv.status === 'Paid') { 
+                    dSum += amt; 
+                    if (el('paidSupplierTableBody')) el('paidSupplierTableBody').appendChild(tr); 
+                } else { 
+                    pSum += amt; 
+                    if (el('pendingSupplierTableBody')) el('pendingSupplierTableBody').appendChild(tr); 
+                }
+            })(invoiceRegistry[i], i);
+        }
+        
+        if (el('pendingTotalCell')) el('pendingTotalCell').textContent = '£' + pSum.toFixed(2); 
+        if (el('paidTotalCell')) el('paidTotalCell').textContent = '£' + dSum.toFixed(2);
     }
 
     function recalculateGlobalSpend() {
-        let gAlloc = mockConfigAllocation, dB = 0, iB = 0, eT = 0, aT = 0;
-        document.querySelectorAll('.board-container').forEach(b => { if (b.querySelector('.cat-budget-num')) dB += parseFloat(b.querySelector('.cat-budget-num').textContent || 0); });
-        mockExpensesDb.forEach(x => { iB += parseFloat(x.budget || 0); eT += parseFloat(x.estimated || 0); aT += parseFloat(x.actual || 0); });
-        el('globalDevWorksBudgetVal').textContent = '£' + dB.toFixed(2); el('globalUnallocatedBudgetVal').textContent = '£' + (gAlloc - dB).toFixed(2);
-        el('globalDevWorksSpentVal').textContent = '£' + aT.toFixed(2); el('globalDevWorksRemVal').textContent = '£' + (gAlloc - aT).toFixed(2);
-        el('globalBudgetVal').textContent = '£' + iB.toFixed(2); el('globalEstimatedVal').textContent = '£' + eT.toFixed(2); el('globalActualVal').textContent = '£' + aT.toFixed(2);
-        el('globalVarianceVal').textContent = '£' + (iB - aT).toFixed(2);
+        var gAlloc = mockConfigAllocation, dB = 0, iB = 0, eT = 0, aT = 0;
+        var boards = document.querySelectorAll('.board-container');
+        
+        for (var i = 0; i < boards.length; i++) {
+            var numEl = boards[i].querySelector('.cat-budget-num');
+            if (numEl) {
+                dB += parseFloat(numEl.textContent || 0);
+            }
+        }
+        
+        for (var j = 0; j < mockExpensesDb.length; j++) {
+            iB += parseFloat(mockExpensesDb[j].budget || 0); 
+            eT += parseFloat(mockExpensesDb[j].estimated || 0); 
+            aT += parseFloat(mockExpensesDb[j].actual || 0);
+        }
+        
+        if (el('globalDevWorksBudgetVal')) el('globalDevWorksBudgetVal').textContent = '£' + dB.toFixed(2); 
+        if (el('globalUnallocatedBudgetVal')) el('globalUnallocatedBudgetVal').textContent = '£' + (gAlloc - dB).toFixed(2);
+        if (el('globalDevWorksSpentVal')) el('globalDevWorksSpentVal').textContent = '£' + aT.toFixed(2); 
+        if (el('globalDevWorksRemVal')) el('globalDevWorksRemVal').textContent = '£' + (gAlloc - aT).toFixed(2);
+        if (el('globalBudgetVal')) el('globalBudgetVal').textContent = '£' + iB.toFixed(2); 
+        if (el('globalEstimatedVal')) el('globalEstimatedVal').textContent = '£' + eT.toFixed(2); 
+        if (el('globalActualVal')) el('globalActualVal').textContent = '£' + aT.toFixed(2);
+        if (el('globalVarianceVal')) el('globalVarianceVal').textContent = '£' + (iB - aT).toFixed(2);
     }
 
-    el('amendGlobalAllocationBtn').onclick = (e) => {
-        if (e.target.textContent === 'Amend') { e.target.textContent = 'Save'; el('globalProjectAllocationInput').removeAttribute('disabled'); el('globalProjectAllocationInput').focus(); }
-        else { e.target.textContent = 'Amend'; el('globalProjectAllocationInput').setAttribute('disabled', 'true'); mockConfigAllocation = parseFloat(el('globalProjectAllocationInput').value || 0); localStorage.setItem('refurb_global_allocation', mockConfigAllocation.toString()); recalculateGlobalSpend(); }
-    };
+    if (el('amendGlobalAllocationBtn')) {
+        el('amendGlobalAllocationBtn').onclick = function(e) {
+            if (e.target.textContent === 'Amend') { 
+                e.target.textContent = 'Save'; 
+                el('globalProjectAllocationInput').removeAttribute('disabled'); 
+                el('globalProjectAllocationInput').focus(); 
+            } else { 
+                e.target.textContent = 'Amend'; 
+                el('globalProjectAllocationInput').setAttribute('disabled', 'true'); 
+                mockConfigAllocation = parseFloat(el('globalProjectAllocationInput').value || 0); 
+                localStorage.setItem('refurb_global_allocation', mockConfigAllocation.toString()); 
+                recalculateGlobalSpend(); 
+            }
+        };
+    }
 
-    el('addExpenseBtn').onclick = () => {
-        let g = (el('expGroup').value || 'General').trim(), cb = parseFloat(el('catBudget').value || 0);
-        let match = el('board-' + g.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase());
-        if (match && match.querySelector('.cat-budget-num')) {
-            cb = parseFloat(match.querySelector('.cat-budget-num').textContent || 0);
-        }
-        mockExpensesDb.push({ 
-            id: 'exp-' + Date.now(), 
-            entry_date: el('expDate').value, 
-            development_works: g, 
-            category_budget: cb, 
-            item_task: el('expItem').value.trim(), 
-            budget: parseFloat(el('expBudget').value || 0), 
-            estimated: parseFloat(el('expEstimated').value || 0), 
-            actual: parseFloat(el('expActual').value || 0) 
-        });
-        localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb)); 
-        synchroniseAppFromLocal();
-        el('expItem').value = ''; el('expBudget').value = '0.00'; el('expEstimated').value = '0.00'; el('expActual').value = '0.00';
-    };
+    if (el('addExpenseBtn')) {
+        el('addExpenseBtn').onclick = function() {
+            var g = (el('expGroup').value || 'General').trim();
+            var cb = parseFloat(el('catBudget').value || 0);
+            var match = el('board-' + g.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase());
+            
+            if (match && match.querySelector('.cat-budget-num')) {
+                cb = parseFloat(match.querySelector('.cat-budget-num').textContent || 0);
+            }
+            
+            mockExpensesDb.push({ 
+                id: 'exp-' + Date.now(), 
+                entry_date: el('expDate').value, 
+                development_works: g, 
+                category_budget: cb, 
+                item_task: el('expItem').value.trim(), 
+                budget: parseFloat(el('expBudget').value || 0), 
+                estimated: parseFloat(el('expEstimated').value || 0), 
+                actual: parseFloat(el('expActual').value || 0) 
+            });
+            
+            localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb)); 
+            synchroniseAppFromLocal();
+            
+            el('expItem').value = ''; 
+            el('expBudget').value = '0.00'; 
+            el('expEstimated').value = '0.00'; 
+            el('expActual').value = '0.00';
+        };
+    }
 
-    el('addSupplierBtn').onclick = () => {
-        invoiceRegistry.push({ 
-            date: el('supDate').value, 
-            name: el('supName').value.trim(), 
-            invoiceNo: el('supInvoiceNo').value.trim(), 
-            amountPaid: parseFloat(el('supAmountPaid').value || 0), 
-            paymentMethod: el('supPaymentMethod').value.trim(), 
-            status: el('supStatus').value, 
-            invoiceUrl: el('supInvoiceUrl').value.trim() 
-        });
-        localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry)); 
-        refreshSupplierTableViews();
-        el('supName').value = ''; el('supInvoiceNo').value = ''; el('supAmountPaid').value = '0.00'; el('supPaymentMethod').value = ''; el('supInvoiceUrl').value = '';
-    };
+    if (el('addSupplierBtn')) {
+        el('addSupplierBtn').onclick = function() {
+            invoiceRegistry.push({ 
+                date: el('supDate').value, 
+                name: el('supName').value.trim(), 
+                invoiceNo: el('supInvoiceNo').value.trim(), 
+                amountPaid: parseFloat(el('supAmountPaid').value || 0), 
+                paymentMethod: el('supPaymentMethod').value.trim(), 
+                status: el('supStatus').value, 
+                invoiceUrl: el('supInvoiceUrl').value.trim() 
+            });
+            
+            localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry)); 
+            refreshSupplierTableViews();
+            
+            el('supName').value = ''; 
+            el('supInvoiceNo').value = ''; 
+            el('supAmountPaid').value = '0.00'; 
+            el('supPaymentMethod').value = ''; 
+            el('supInvoiceUrl').value = '';
+        };
+    }
 </script>
 </body>
 </html>
