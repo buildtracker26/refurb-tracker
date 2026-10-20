@@ -114,7 +114,9 @@
 </div>
 <!-- === END OF CHUNK 4 OF 7 === -->
 
+
 <!-- === START OF CHUNK 5 OF 7 === -->
+
 <script>
     const el = id => document.getElementById(id);
 
@@ -135,11 +137,11 @@
         if (titleEl) titleEl.textContent = "Project Tracker";
     });
 
-    // EXPLICIT IMMEDIATE INTERACTION BINDING (Moved outside load wrapper to fix lockout bug)
+    // EXPLICIT IMMEDIATE INTERACTION BINDING (Fixed login lockout bug)
     const loginBtn = el('loginSubmitBtn');
     if (loginBtn) {
         loginBtn.onclick = () => {
-            let u = el('loginEmail').value.trim().toLowerCase(); // Lowercase patch applied for safety
+            let u = el('loginEmail').value.trim().toLowerCase(); 
             let p = el('loginPassword').value;
             if (TEAM_ACCOUNTS[u] && TEAM_ACCOUNTS[u].password === p) {
                 el('loginPrompt').remove(); 
@@ -166,9 +168,8 @@
         refreshSupplierTableViews();
         recalculateGlobalSpend();
     }
+
 <!-- === END OF CHUNK 5 OF 7 === -->
-
-
 
 
 // <!-- === START OF CHUNK 6 OF 7 === -->
@@ -178,29 +179,29 @@
         let targetBoard = el(categoryId);
         if (!targetBoard) {
             targetBoard = document.createElement('div'); targetBoard.className = 'board-container'; targetBoard.id = categoryId;
-            targetBoard.innerHTML = `<div class="board-header"><div><span>\${groupName}</span> <span class="cat-budget-display">Budget: £<span class="cat-budget-num">\${parseFloat(item.category_budget || 0).toFixed(2)}</span> <button class="board-nav-btn edit-cat-btn">Amend</button></span></div><div><button class="board-nav-btn up-btn">▲</button><button class="board-nav-btn down-btn">▼</button></div></div><table class="tracker-table"><thead><tr><th>Date</th><th>Item / Task</th><th>Budget</th><th>Estimated</th><th>Actual</th><th>Variance</th><th>Action</th></tr></thead><tbody class="board-table-body"></tbody><tfoot><tr class="subtotal-row"><td colspan="2" style="text-align:right;">Totals:</td><td class="s-b">£0.00</td><td class="s-e">£0.00</td><td class="s-a">£0.00</td><td class="s-v">£0.00</td><td></td></tr></tfoot></table>`;
+            targetBoard.innerHTML = `<div class="board-header"><div><span>${groupName}</span> <span class="cat-budget-display">Budget: £<span class="cat-budget-num">${parseFloat(item.category_budget || 0).toFixed(2)}</span> <button class="board-nav-btn edit-cat-btn">Amend</button></span></div><div><button class="board-nav-btn up-btn">▲</button><button class="board-nav-btn down-btn">▼</button></div></div><table class="tracker-table"><thead><tr><th>Date</th><th>Item / Task</th><th>Budget</th><th>Estimated</th><th>Actual</th><th>Variance</th><th>Action</th></tr></thead><tbody class="board-table-body"></tbody><tfoot><tr class="subtotal-row"><td colspan="2" style="text-align:right;">Totals:</td><td class="s-b">£0.00</td><td class="s-e">£0.00</td><td class="s-a">£0.00</td><td class="s-v">£0.00</td><td></td></tr></tfoot></table>`;
             targetBoard.querySelector('.up-btn').onclick = () => { let p = targetBoard.previousElementSibling; if (p) targetBoard.parentNode.insertBefore(targetBoard, p); };
             targetBoard.querySelector('.down-btn').onclick = () => { let n = targetBoard.nextElementSibling; if (n) targetBoard.parentNode.insertBefore(n, targetBoard); };
             targetBoard.querySelector('.edit-cat-btn').onclick = (e) => {
                 let span = targetBoard.querySelector('.cat-budget-num');
-                if (e.target.textContent === 'Amend') { e.target.textContent = 'Save'; span.innerHTML = `<input type="number" style="width:70px;" value="\${span.textContent}">`; }
+                if (e.target.textContent === 'Amend') { e.target.textContent = 'Save'; span.innerHTML = `<input type="number" style="width:70px;" value="${span.textContent}">`; }
                 else { e.target.textContent = 'Amend'; let val = parseFloat(span.querySelector('input').value || 0); span.textContent = val.toFixed(2); mockExpensesDb.filter(r => r.development_works === groupName).forEach(r => r.category_budget = val); localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb)); recalculateGlobalSpend(); }
             };
             el('boardsContainer').appendChild(targetBoard);
         }
         let row = document.createElement('tr'); row.id = 'r-' + item.id; let v = parseFloat(item.budget || 0) - parseFloat(item.actual || 0);
-        row.innerHTML = `<td>\${item.entry_date}</td><td>\${item.item_task}</td><td>£\${parseFloat(item.budget || 0).toFixed(2)}</td><td>£\${parseFloat(item.estimated || 0).toFixed(2)}</td><td>£\${parseFloat(item.actual || 0).toFixed(2)}</td><td class="\${v >= 0 ? 'variance-good' : 'variance-bad'}">£\${v.toFixed(2)}</td><td><button class="amend-btn-inline">Amend</button><button class="del-btn-inline">Delete</button></td>`;
+        row.innerHTML = `<td>${item.entry_date}</td><td>${item.item_task}</td><td>£${parseFloat(item.budget || 0).toFixed(2)}</td><td>£${parseFloat(item.estimated || 0).toFixed(2)}</td><td>£${parseFloat(item.actual || 0).toFixed(2)}</td><td class="${v >= 0 ? 'variance-good' : 'variance-bad'}">£${v.toFixed(2)}</td><td><button class="amend-btn-inline">Amend</button><button class="del-btn-inline">Delete</button></td>`;
         row.querySelector('.del-btn-inline').onclick = () => { if (confirm("Delete task?")) { mockExpensesDb = mockExpensesDb.filter(x => x.id !== item.id); localStorage.setItem('refurb_expenses_data', JSON.stringify(mockExpensesDb)); row.remove(); if (targetBoard.querySelectorAll('.board-table-body tr').length === 0) targetBoard.remove(); else recalculateBoardTotals(targetBoard); recalculateGlobalSpend(); } };
         
         row.querySelector('.amend-btn-inline').onclick = (e) => {
             let cells = row.querySelectorAll('td');
             if (e.target.textContent === 'Amend') {
                 e.target.textContent = 'Save';
-                cells.item(0).innerHTML = `<input type="date" value="\${item.entry_date}">`; 
-                cells.item(1).innerHTML = `<input type="text" value="\${item.item_task}">`;
-                cells.item(2).innerHTML = `<input type="number" value="\${item.budget}">`; 
-                cells.item(3).innerHTML = `<input type="number" value="\${item.estimated}">`; 
-                cells.item(4).innerHTML = `<input type="number" value="\${item.actual}">`;
+                cells.item(0).innerHTML = `<input type="date" value="${item.entry_date}">`; 
+                cells.item(1).innerHTML = `<input type="text" value="${item.item_task}">`;
+                cells.item(2).innerHTML = `<input type="number" value="${item.budget}">`; 
+                cells.item(3).innerHTML = `<input type="number" value="${item.estimated}">`; 
+                cells.item(4).innerHTML = `<input type="number" value="${item.actual}">`;
             } else {
                 e.target.textContent = 'Amend'; 
                 let inputs = row.querySelectorAll('input');
@@ -219,29 +220,34 @@
 
     function recalculateBoardTotals(b) {
         let tb = 0, te = 0, ta = 0;
-        b.querySelectorAll('.board-table-body tr').forEach(r => { let id = r.id.replace('r-', ''); let item = mockExpensesDb.find(x => x.id === id); if (item) { tb += parseFloat(item.budget || 0); te += parseFloat(item.estimated || 0); ta += parseFloat(item.actual || 0); } });
+        b.querySelectorAll('.board-table-body tr').forEach(r => { 
+            let id = r.id.replace('r-', ''); 
+            let item = mockExpensesDb.find(x => String(x.id) === String(id)); 
+            if (item) { tb += parseFloat(item.budget || 0); te += parseFloat(item.estimated || 0); ta += parseFloat(item.actual || 0); } 
+        });
         b.querySelector('.s-b').textContent = '£' + tb.toFixed(2); b.querySelector('.s-e').textContent = '£' + te.toFixed(2); b.querySelector('.s-a').textContent = '£' + ta.toFixed(2);
         let v = tb - ta; b.querySelector('.s-v').textContent = '£' + v.toFixed(2); b.querySelector('.s-v').className = 's-v ' + (v >= 0 ? 'variance-good' : 'variance-bad');
-    }
+    } 
 // <!-- === END OF CHUNK 6 OF 7 === -->
+
 // <!-- === START OF CHUNK 7 OF 7 === -->
-    function refreshSupplierTableViews() {
+      function refreshSupplierTableViews() {
         el('pendingSupplierTableBody').innerHTML = ''; el('paidSupplierTableBody').innerHTML = ''; let pSum = 0, dSum = 0;
         invoiceRegistry.forEach((inv, i) => {
             let tr = document.createElement('tr'), amt = parseFloat(inv.amountPaid || 0);
-            tr.innerHTML = `<td>\${inv.date}</td><td>\${inv.name}</td><td>\${inv.invoiceNo}</td><td>£\${amt.toFixed(2)}</td><td>\${inv.paymentMethod}</td><td>\${inv.status}</td><td>\${inv.invoiceUrl ? `<a href="\${inv.invoiceUrl}" target="_blank">View</a>` : 'None'}</td><td><button class="amend-inv">Amend</button><button class="del-inv">Remove</button></td>`;
+            tr.innerHTML = `<td>${inv.date}</td><td>${inv.name}</td><td>${inv.invoiceNo}</td><td>£${amt.toFixed(2)}</td><td>${inv.paymentMethod}</td><td>${inv.status}</td><td>${inv.invoiceUrl ? `<a href="\${inv.invoiceUrl}" target="_blank">View</a>` : 'None'}</td><td><button class="amend-inv">Amend</button><button class="del-inv">Remove</button></td>`;
             tr.querySelector('.del-inv').onclick = () => { if (confirm("Remove invoice?")) { invoiceRegistry.splice(i, 1); localStorage.setItem('refurb_invoices_data', JSON.stringify(invoiceRegistry)); refreshSupplierTableViews(); } };
             tr.querySelector('.amend-inv').onclick = (e) => {
                 let cells = tr.querySelectorAll('td');
                 if (e.target.textContent === 'Amend') {
                     e.target.textContent = 'Save';
-                    cells.item(0).innerHTML = `<input type="date" value="\${inv.date}">`; 
-                    cells.item(1).innerHTML = `<input type="text" value="\${inv.name}">`; 
-                    cells.item(2).innerHTML = `<input type="text" value="\${inv.invoiceNo}">`;
-                    cells.item(3).innerHTML = `<input type="number" value="\${inv.amountPaid}">`; 
-                    cells.item(4).innerHTML = `<input type="text" value="\${inv.paymentMethod}">`;
-                    cells.item(5).innerHTML = `<select><option value="Paid" \${inv.status === 'Paid' ? 'selected' : ''}>Paid</option><option value="Pending" \${inv.status === 'Pending' ? 'selected' : ''}>Pending</option></select>`;
-                    cells.item(6).innerHTML = `<input type="text" value="\${inv.invoiceUrl || ''}">`;
+                    cells.item(0).innerHTML = `<input type="date" value="${inv.date}">`; 
+                    cells.item(1).innerHTML = `<input type="text" value="${inv.name}">`; 
+                    cells.item(2).innerHTML = `<input type="text" value="${inv.invoiceNo}">`;
+                    cells.item(3).innerHTML = `<input type="number" value="${inv.amountPaid}">`; 
+                    cells.item(4).innerHTML = `<input type="text" value="${inv.paymentMethod}">`;
+                    cells.item(5).innerHTML = `<select><option value="Paid" ${inv.status === 'Paid' ? 'selected' : ''}>Paid</option><option value="Pending" ${inv.status === 'Pending' ? 'selected' : ''}>Pending</option></select>`;
+                    cells.item(6).innerHTML = `<input type="text" value="${inv.invoiceUrl || ''}">`;
                 } else {
                     e.target.textContent = 'Amend'; 
                     let inputs = tr.querySelectorAll('input, select');
